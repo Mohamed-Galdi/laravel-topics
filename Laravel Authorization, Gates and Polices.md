@@ -15,7 +15,7 @@
     - [e. Policy Responses](#e-policy-responses)
     - [f. Usage](#f-usage)
         - [Via the User Model](#-via-the-user-model)
-        - [Via the Gate Facade](#-via-the-gate-facade)
+        - [Via the Gate Facade](#-via-thegatefacade)
         - [Via Middleware](#-via-middleware)
         - [Via Blade Template](#-via-blade-template)
 6. [Authorization & Inertia](#6-authorization--inertia)
