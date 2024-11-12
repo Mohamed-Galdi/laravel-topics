@@ -4,7 +4,7 @@
 2. [What is Authorization?](#2-what-is-authorization)
 3. [Gates vs Polices](#3-gates-vs-polices)
 4. [Gates](#4-gates)
-    - [a. Definition](#a-definetion)
+    - [a. Definition](#a-definition)
     - [b. Usage](#b-usage)
     - [c. Gate Responses](#c-gate-responses)
 5. [Policies](#5-policies)
@@ -14,10 +14,10 @@
     - [d. Methods Without Models](#d-methods-without-models)
     - [e. Policy Responses](#e-policy-responses)
     - [f. Usage](#f-usage)
-        - [Via the User Model](#via-the-user-model)
-        - [Via the Gate Facade](#via-the-gate-facade)
-        - [Via Middleware](#via-middleware)
-        - [Via Blade Template](#via-blade-template)
+        - [Via the User Model](#-via-the-user-model)
+        - [Via the Gate Facade](#-via-the-gate-facade)
+        - [Via Middleware](#-via-middleware)
+        - [Via Blade Template](#-via-blade-template)
 6. [Authorization & Inertia](#6-authorization--inertia)
 
 # 1. Intro
@@ -97,7 +97,7 @@ You do not need to choose between exclusively using gates or exclusively using p
 
 # 4. Gates
 
-## a. Definetion:
+## a. Definition:
 
  Gates are defined within the `boot` method of the `App\Providers\AppServiceProvider` class using the `Gate` facade. 
 
