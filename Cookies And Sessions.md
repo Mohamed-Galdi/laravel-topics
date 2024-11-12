@@ -5,7 +5,7 @@ This guide covers the key concepts of **cookies**, **sessions**, and **caching**
 1. [Cookies](#1-cookies)
 2. [Sessions](#2-sessions)
 3. [Cache](#3-cache)
-4. [Summary Table of Differences](#4-summary-table-of-differences)
+4. [Summary Table of Differences](#4--summary-table-of-differences)
 5. [Drivers in Laravel](#5-drivers-in-laravel)
 6. [Laravel Authentication: Sessions and Cookies](#6-laravel-authentication-sessions-and-cookies)
 
