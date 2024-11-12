@@ -1,4 +1,26 @@
-#### 1. Intro
+# Table of Contents
+
+1. [Intro](#1-intro)
+2. [What is Authorization?](#2-what-is-authorization)
+3. [Gates vs Polices](#3-gates-vs-polices)
+4. [Gates](#4-gates)
+    - [a. Definition](#a-definition)
+    - [b. Usage](#b-usage)
+    - [c. Gate Responses](#c-gate-responses)
+5. [Policies](#5-policies)
+    - [a. Generate a policy](#a-generate-a-policy)
+    - [b. Naming conventions](#b-naming-conventions)
+    - [c. Writing policies](#c-writing-policies)
+    - [d. Methods Without Models](#d-methods-without-models)
+    - [e. Policy Responses](#e-policy-responses)
+    - [f. Usage](#f-usage)
+        - [Via the User Model](#via-the-user-model)
+        - [Via the Gate Facade](#via-the-gate-facade)
+        - [Via Middleware](#via-middleware)
+        - [Via Blade Template](#via-blade-template)
+6. [Authorization & Inertia](#6-authorization--inertia)
+
+# 1. Intro
 
 Imagine a blog platform where users can create, view, edit, and delete their posts. Each user's dashboard displays a list of their posts, each with a "View" button leading to a page like `posts/post/1`. However, with this setup, a curious user might try modifying the URL to access posts they didn’t create by guessing routes like `posts/post/4` or `posts/post/500`.
 
@@ -44,7 +66,6 @@ This is similar to a route with a closure:
 Route::get('/admin', function () {
     return view('admin.index')
 });
-
 ```
 
 ### Policy Example
@@ -70,8 +91,6 @@ class PostController
         return redirect()->back();
      }
 }
-
-
 ```
 
 You do not need to choose between exclusively using gates or exclusively using policies when building an application. Most applications will most likely contain some mixture of gates and policies, and that is perfectly fine! Gates are most applicable to actions that are not related to any model or resource, such as viewing an administrator dashboard. In contrast, policies should be used when you wish to authorize an action for a particular model or resource.
@@ -94,7 +113,7 @@ Example:
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
- 
+
 
 public function boot(): void
 {
@@ -133,9 +152,9 @@ class PostController extends Controller
         if (! Gate::allows('update-post', $post)) {
             abort(403);
         }
- 
+
         // Update the post...
- 
+
         return redirect('/posts');
     }
 }
@@ -165,7 +184,7 @@ So far, we’ve only examined Gates that return simple boolean values. Sometimes
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
- 
+
 Gate::define('edit-settings', function (User $user) {
     return $user->isAdmin
                 ? Response::allow()
@@ -177,7 +196,7 @@ Even when returning a response from your gate, the `Gate::allows` method still r
 
 ```php
 $response = Gate::inspect('edit-settings');
- 
+
 if ($response->allowed()) {
     // The action is authorized...
 } else {
@@ -191,7 +210,7 @@ By default, a denied Gate returns a `403` HTTP response, but you can customize t
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
- 
+
 Gate::define('edit-settings', function (User $user) {
     return $user->isAdmin
                 ? Response::allow()
@@ -205,7 +224,7 @@ To return a `404` (not found) response for unauthorized actions—a common patte
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
- 
+
 Gate::define('edit-settings', function (User $user) {
     return $user->isAdmin
                 ? Response::allow()
@@ -304,9 +323,9 @@ class PostController extends Controller
         if ($request->user()->cannot('update', $post)) {
             abort(403);
         }
- 
+
         // Update the post...
- 
+
         return redirect('/posts');
     }
 }
@@ -330,9 +349,9 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         Gate::authorize('update', $post);
- 
+
         // The current user can update the blog post...
- 
+
         return redirect('/posts');
     }
 }
@@ -384,7 +403,7 @@ When writing Blade templates, you may want to display content based on user perm
 @else
     <!-- ... -->
 @endcan
- 
+
 @cannot('update', $post)
     <!-- The current user cannot update the post... -->
 @elsecannot('create', App\Models\Post::class)
@@ -420,8 +439,6 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 }
-
-
 ```
 
 In this example:
