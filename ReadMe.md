@@ -4,6 +4,8 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 
 ## Table of Contents
 
+1. [Cookies And Sessions](Cookies%20And%20Sessions.md)
+2. [Authentication (handwritten)]()
 1. [Authorization](Laravel%20Authorization,%20Gates%20and%20Polices.md)
 2. [Cache (In Progress)]()
 
