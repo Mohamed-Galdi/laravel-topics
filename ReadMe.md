@@ -4,10 +4,10 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 
 ## Table of Contents
 
-1. [Authentication]()
-2. [Authorization](Laravel%20Authorization,%20Gates%20and%20Polices.md)
-3. [Cookies And Sessions](Cookies%20And%20Sessions.md)
-6. [Deploy Laravel on LEMP server]()
+1. [Authentication](1.%20Laravel%20Authentication/Laravel%20auth.md)
+2. [Authorization](2.%20Laravel%20Authorization/Laravel%20Authorization%2C%20Gates%20and%20Polices.md)
+3. [Cookies And Sessions](3.%20Cookies%20and%20Sessions/Cookies%20And%20Sessions.md)
+6. [Deploy Laravel on LEMP server](4.%20Laravel%20on%20LEMP/Deploy%20Laravel%20App%20on%20LEMP%20Server.md)
 4. [Cache (In Progress)]()
 5. [Laravel APIs (In Progress)]()
 7. [Filament (In Progress)]()
