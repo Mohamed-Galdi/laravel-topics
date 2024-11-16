@@ -1,3 +1,25 @@
+# Table of Contents
+
+1. [Prerequisites](#1-prerequisites)
+
+2. [Steps](#2-steps)
+   - [1. Prepare Domain](#1%EF%B8%8F%E2%83%A3-prepare-a-domain-or-sub-domain-for-the-project)
+   - [2. Create Production Branch](#2%EF%B8%8F%E2%83%A3-create-prod-branch-on-the-project-remote-repository)
+   - [3. Clone Project](#3%EF%B8%8F%E2%83%A3-on-the-server-cd-to-varwww-clone-the-project-and-checkout-to-prod-branch)
+   - [4. Create Database](#4%EF%B8%8F%E2%83%A3-create-a-new-database-for-that-project)
+   - [5. Set Folder Ownership](#5%EF%B8%8F%E2%83%A3-assign-ownership-of-the-project-folder-to-the-current-user)
+   - [6. Configure Environment](#6%EF%B8%8F%E2%83%A3-create-the-env-file-and-fill-in-the-configurations)
+   - [7. Run Laravel Setup](#7%EF%B8%8F%E2%83%A3-now-navigate-to-the-project-folder-and-run-the-laravel-setup-commands)
+   - [8. Build Frontend](#8%EF%B8%8F%E2%83%A3-install-front-end-dependencies-and-build-assets)
+   - [9. Configure Nginx](#9%EF%B8%8F%E2%83%A3-create-an-nginx-config-file-for-the-project)
+   - [10. SSL Setup](#1%EF%B8%8F%E2%83%A30%EF%B8%8F%E2%83%A3-generate-the-ssl-certificate-using-certbot)
+   - [11. Set Permissions](#1%EF%B8%8F%E2%83%A31%EF%B8%8F%E2%83%A3-give-the-web-server-user-write-access-to-storage-and-cache)
+
+3. [Auto-Deploy Workflow](#3-auto-deploy-workflow)
+   - [1. Add SSH Key](#1%EF%B8%8F%E2%83%A3-add-ssh-key-to-github)
+   - [2. Create Deploy Script](#2%EF%B8%8F%E2%83%A3-create-the-deploy-script)
+   - [3. Setup GitHub Actions](#3%EF%B8%8F%E2%83%A3-create-the-github-actions-workflow)
+
 # 1. PREREQUISITES
 
 To host a laravel project on an Ubuntu server you must first ensure you have the following things:
