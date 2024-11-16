@@ -12,7 +12,7 @@
    - [7. Run Laravel Setup](#7%EF%B8%8F%E2%83%A3-now-navigate-to-the-project-folder-and-run-the-laravel-setup-commands)
    - [8. Build Frontend](#8%EF%B8%8F%E2%83%A3-install-front-end-dependencies-and-build-assets)
    - [9. Configure Nginx](#9%EF%B8%8F%E2%83%A3-create-an-nginx-config-file-for-the-project)
-   - [10. SSL Setup](#1%EF%B8%8F%E2%83%A30%EF%B8%8F%E2%83%A3-generate-the-ssl-certificate-using-certbot)
+   - [10. SSL Setup](#1%EF%B8%8F⃣0%EF%B8%8F⃣--generate-the-ssl-certificate-using-certbot)
    - [11. Set Permissions](#1%EF%B8%8F%E2%83%A31%EF%B8%8F%E2%83%A3-give-the-web-server-user-write-access-to-storage-and-cache)
 
 3. [Auto-Deploy Workflow](#3-auto-deploy-workflow)
