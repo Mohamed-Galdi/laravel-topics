@@ -608,7 +608,7 @@ For securing your API, **Sanctum** is the recommended package. It supports both 
 
 To get started quickly, you can use a starter kit like **Laravel Breeze**, which provides an easy setup for authentication.
 
-For a detailed guide on implementing authentication and authorization in Laravel APIs, please refer to my dedicated documentation [here](link).
+For a detailed guide on implementing authentication and authorization in Laravel APIs, please refer to my dedicated documentation [here](https://github.com/Mohamed-Galdi/Laravel-Topics/blob/main/1.%20Laravel%20Authentication/Laravel%20auth.md).
 
 # 6. API Documentation
 
