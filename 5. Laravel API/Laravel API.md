@@ -1,16 +1,17 @@
 # Table of Contents
+
 1. [API  Versioning](#1-api-versioning)
    - [a. Controller Versioning](#a-controller-versioning)
    - [b. Route Versioning](#b-route-versioning)
 2. [Resources and Collections](#2-resources-and-collections)
-    - [a. Resources](#a-resources)
-    - [b. Collections](#b-collections)
-    - [c. Pagination](#c-pagination)
-    - [d. Conditional Attributes](#d-conditional-attributes)
-    - [e. Relationships](#e-relationships)
+   - [a. Resources](#a-resources)
+   - [b. Collections](#b-collections)
+   - [c. Pagination](#c-pagination)
+   - [d. Conditional Attributes](#d-conditional-attributes)
+   - [e. Relationships](#e-relationships)
 3. [Filters](#3-filters)
-    - [a. Filter Class](#a-filter-class)
-    - [b. Base Filter Class](#b-base-filter-class)
+   - [a. Filter Class](#a-filter-class)
+   - [b. Base Filter Class](#b-base-filter-class)
 4. [Form Request](#4-form-request)
 5. [API Authentication](#5-api-authentication)
 6. [API Documentation](#6-api-documentation)
@@ -125,7 +126,6 @@ class ProductsController extends Controller
         return new ProductResource($product);
     }
 }
-
 ```
 
 API Response:
@@ -139,7 +139,6 @@ API Response:
         "price": 100
     }
 }
-
 ```
 
 By default, resource responses are wrapped in a `data` object. This behavior is a convention that promotes consistency and is generally recommended, though you can customize it if needed.
@@ -184,7 +183,6 @@ class ProductCollection extends ResourceCollection
         ];
     }
 }
-
 ```
 
 Returning a Collection:
@@ -196,7 +194,6 @@ use App\Models\Product;
 Route::get('/products', function () {
     return new ProductCollection(Product::all());
 });
-
 ```
 
 If you don’t need a separate collection class, you can use the `collection()` method directly on the resource:
@@ -208,7 +205,6 @@ use App\Models\Product;
 Route::get('/products', function () {
     return ProductResource::collection(Product::all());
 });
-
 ```
 
 ## c. Pagination
@@ -272,6 +268,7 @@ You can conditionally include attributes in the resource response using methods 
   ```php
   'name' => $this->whenHas('name'),
   ```
+
 - **Using `whenNotNull`:**
   
   ```php
@@ -293,7 +290,6 @@ public function toArray($request)
         'category' => new CategoryResource($this->whenLoaded('category')),
     ];
 }
-
 ```
 
 **Example Controller:**
@@ -304,7 +300,6 @@ use App\Http\Resources\V1\ProductResource;
 
 $product = Product::with('category')->find(1);
 return new ProductResource($product);
-
 ```
 
 API Response:
@@ -337,13 +332,12 @@ Filters depend on query parameters sent by the client. For example:
    
    - Laravel interprets it as a simple key-value pair, with `price` as the key and `20` as the value.
 
-1. **Advanced Filtering with Operators**  
+2. **Advanced Filtering with Operators**  
    `url/products?price[gt]=20`  
    
    - Here, the query parameter `price` is an array (`gt` is a key within that array).
    - Laravel parses this into a structured object: `['gt' => '20']`.
    - This allows you to specify a comparison operator (`gt`, `lt`, etc.) along with the value.
-
 
 ![](query%20operators.png)
 
@@ -405,7 +399,6 @@ class ProductFilter {
         return $queries;
     }
 }
-
 ```
 
 Once the filter class is defined, you can use it in your controller to dynamically generate queries:
@@ -433,7 +426,6 @@ class ProductController extends Controller {
         return response()->json($products->appends($request->query()));
     }
 }
-
 ```
 
 ## b. Base Filter Class
@@ -476,7 +468,6 @@ class ApiFilter {
         return $queries;
     }
 }
-
 ```
 
 Extending the Base Filter Class:
@@ -496,7 +487,6 @@ class ProductFilter extends ApiFilter {
         'productionDate' => 'prod_date',
     ];
 }
-
 ```
 
 **Controller Usage:**
@@ -511,7 +501,6 @@ public function index(Request $request) {
 
     return response()->json(Product::where($queries)->paginate(10)->appends($request->query()));
 }
-
 ```
 
 **Note:** While this filtering approach is effective and secure, it can be further enhanced to support additional features like dynamic query building, validation for filter values, handling `OR` conditions, partial matching (e.g., `LIKE` queries), sorting (e.g., `?sort=price:asc`), eager loading related data (e.g., `?include=category,tags`), and caching for frequently used filters. These improvements can make the filtering system more flexible and scalable for complex API requirements.
@@ -569,7 +558,7 @@ public function store(StoreProductRequest $request): RedirectResponse
 {
     // The request is already validated and authorized.
     $validated = $request->validated(); // Retrieves all validated data.
-    
+
     // Optionally retrieve specific portions of validated data:
     $only = $request->safe()->only(['name', 'email']);
     $except = $request->safe()->except(['password']);
