@@ -2,15 +2,38 @@
 
 ## Table of Contents
 
-- [Introduction to Stripe Integration](#introduction-to-stripe-integration)
-- [Step 1: Install Stripe PHP Package](#step-1-install-stripe-php-package)
-- [Step 2: Set Up Secret Key](#step-2-set-up-secret-key)
-- [Step 3: Create Checkout Button and Route](#step-3-create-checkout-button-and-route)
-- [Step 4: Generate Checkout Session and Handle Payment](#step-4-generate-checkout-session-and-handle-payment)
-- [Step 5: Success and Failure Pages](#step-5-success-and-failure-pages)
-- [Step 6: Stripe Webhooks for Order Update](#step-6-stripe-webhooks-for-order-update)
-- [Step 7: Webhook Implementation](#step-7-webhook-implementation)
-- [Using Laravel Cashier for Stripe Integration](#using-laravel-cashier-for-stripe-integration)
+1. [Payment Workflow Overview](#1-payment-workflow-overview)
+    - [Step 1: Initiating Checkout](#step-1-initiating-checkout)
+    - [Step 2: Creating a Checkout Session](#step-2-creating-a-checkout-session)
+    - [Step 3: Receiving the Checkout Session Object](#step-3-receiving-the-checkout-session-object)
+    - [Step 4: Creating an Unpaid Order](#step-4-creating-an-unpaid-order)
+    - [Step 5: Redirecting to the Stripe Checkout](#step-5-redirecting-to-the-stripe-checkout)
+    - [Step 6: Redirect After Payment](#step-6-redirect-after-payment)
+    - [Step 7: Updating the Order on Success](#step-7-updating-the-order-on-success)
+
+2. [Using Stripe Webhooks for Reliability](#2-using-stripe-webhooks-for-reliability)
+    - [Step 8: Setting Up a Webhook](#step-8-setting-up-a-webhook)
+    - [Step 9: Updating the Order via Webhooks](#step-9-updating-the-order-via-webhooks)
+
+3. [3. Laravel Implementation](#3-laravel-implementation)
+    - [Step 1: Install the Stripe PHP Package](#step-1-install-the-stripe-php-package)
+    - [Step 2: Configure the Secret Key](#step-2-configure-the-secret-key)
+    - [Step 3: Setup the Checkout Button and Route](#step-3-setup-the-checkout-button-and-route)
+    - [Step 4: Generating the Checkout Session and Creating an Unpaid Order](#step-4-generating-the-checkout-session-and-creating-an-unpaid-order)
+    - [Step 5: Creating Success and Failure Pages](#step-5-creating-success-and-failure-pages)
+    - [Step 6: Define Routes for Success and Failure Pages](#step-6-define-routes-for-success-and-failure-pages)
+    - [Step 7: Implement the Success Page Logic](#step-7-implement-the-success-page-logic)
+
+4. [The Necessity of Webhooks](#the-necessity-of-webhooks)
+    - [What Are Webhooks?](#what-are-webhooks)
+    - [Setting Up Webhooks for Local Development](#setting-up-webhooks-for-local-development)
+    - [Handling the Webhook in Laravel](#handling-the-webhook-in-laravel)
+
+5. [Using Laravel Cashier with Stripe](#using-laravel-cashier-with-stripe)
+    - [When to Use Laravel Cashier](#when-to-use-laravel-cashier)
+    - [Why Not Use Laravel Cashier for One-Time Payments?](#why-not-use-laravel-cashier-for-one-time-payments)
+
+6. [Resources](#resources)
 
 
 
