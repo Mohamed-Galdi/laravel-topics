@@ -15,7 +15,7 @@
     - [Step 8: Setting Up a Webhook](#step-8-setting-up-a-webhook)
     - [Step 9: Updating the Order via Webhooks](#step-9-updating-the-order-via-webhooks)
 
-3. [3. Laravel Implementation](#3-laravel-implementation)
+3. [Laravel Implementation](#3-laravel-implementation)
     - [Step 1: Install the Stripe PHP Package](#step-1-install-the-stripe-php-package)
     - [Step 2: Configure the Secret Key](#step-2-configure-the-secret-key)
     - [Step 3: Setup the Checkout Button and Route](#step-3-setup-the-checkout-button-and-route)
