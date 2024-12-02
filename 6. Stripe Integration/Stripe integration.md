@@ -3,39 +3,42 @@
 ## Table of Contents
 
 1. [Payment Workflow Overview](#1-payment-workflow-overview)
-    - [Step 1: Initiating Checkout](#step-1-initiating-checkout)
-    - [Step 2: Creating a Checkout Session](#step-2-creating-a-checkout-session)
-    - [Step 3: Receiving the Checkout Session Object](#step-3-receiving-the-checkout-session-object)
-    - [Step 4: Creating an Unpaid Order](#step-4-creating-an-unpaid-order)
-    - [Step 5: Redirecting to the Stripe Checkout](#step-5-redirecting-to-the-stripe-checkout)
-    - [Step 6: Redirect After Payment](#step-6-redirect-after-payment)
-    - [Step 7: Updating the Order on Success](#step-7-updating-the-order-on-success)
+   
+   - [Step 1: Initiating Checkout](#step-1-initiating-checkout)
+   - [Step 2: Creating a Checkout Session](#step-2-creating-a-checkout-session)
+   - [Step 3: Receiving the Checkout Session Object](#step-3-receiving-the-checkout-session-object)
+   - [Step 4: Creating an Unpaid Order](#step-4-creating-an-unpaid-order)
+   - [Step 5: Redirecting to the Stripe Checkout](#step-5-redirecting-to-the-stripe-checkout)
+   - [Step 6: Redirect After Payment](#step-6-redirect-after-payment)
+   - [Step 7: Updating the Order on Success](#step-7-updating-the-order-on-success)
 
 2. [Using Stripe Webhooks for Reliability](#2-using-stripe-webhooks-for-reliability)
-    - [Step 8: Setting Up a Webhook](#step-8-setting-up-a-webhook)
-    - [Step 9: Updating the Order via Webhooks](#step-9-updating-the-order-via-webhooks)
+   
+   - [Step 8: Setting Up a Webhook](#step-8-setting-up-a-webhook)
+   - [Step 9: Updating the Order via Webhooks](#step-9-updating-the-order-via-webhooks)
 
 3. [Laravel Implementation](#3-laravel-implementation)
-    - [Step 1: Install the Stripe PHP Package](#step-1-install-the-stripe-php-package)
-    - [Step 2: Configure the Secret Key](#step-2-configure-the-secret-key)
-    - [Step 3: Setup the Checkout Button and Route](#step-3-setup-the-checkout-button-and-route)
-    - [Step 4: Generating the Checkout Session and Creating an Unpaid Order](#step-4-generating-the-checkout-session-and-creating-an-unpaid-order)
-    - [Step 5: Creating Success and Failure Pages](#step-5-creating-success-and-failure-pages)
-    - [Step 6: Define Routes for Success and Failure Pages](#step-6-define-routes-for-success-and-failure-pages)
-    - [Step 7: Implement the Success Page Logic](#step-7-implement-the-success-page-logic)
+   
+   - [Step 1: Install the Stripe PHP Package](#step-1-install-the-stripe-php-package)
+   - [Step 2: Configure the Secret Key](#step-2-configure-the-secret-key)
+   - [Step 3: Setup the Checkout Button and Route](#step-3-setup-the-checkout-button-and-route)
+   - [Step 4: Generating the Checkout Session and Creating an Unpaid Order](#step-4-generating-the-checkout-session-and-creating-an-unpaid-order)
+   - [Step 5: Creating Success and Failure Pages](#step-5-creating-success-and-failure-pages)
+   - [Step 6: Define Routes for Success and Failure Pages](#step-6-define-routes-for-success-and-failure-pages)
+   - [Step 7: Implement the Success Page Logic](#step-7-implement-the-success-page-logic)
 
 4. [The Necessity of Webhooks](#the-necessity-of-webhooks)
-    - [What Are Webhooks?](#what-are-webhooks)
-    - [Setting Up Webhooks for Local Development](#setting-up-webhooks-for-local-development)
-    - [Handling the Webhook in Laravel](#handling-the-webhook-in-laravel)
+   
+   - [What Are Webhooks?](#what-are-webhooks)
+   - [Setting Up Webhooks for Local Development](#setting-up-webhooks-for-local-development)
+   - [Handling the Webhook in Laravel](#handling-the-webhook-in-laravel)
 
 5. [Using Laravel Cashier with Stripe](#using-laravel-cashier-with-stripe)
-    - [When to Use Laravel Cashier](#when-to-use-laravel-cashier)
-    - [Why Not Use Laravel Cashier for One-Time Payments?](#why-not-use-laravel-cashier-for-one-time-payments)
+   
+   - [When to Use Laravel Cashier](#when-to-use-laravel-cashier)
+   - [Why Not Use Laravel Cashier for One-Time Payments?](#why-not-use-laravel-cashier-for-one-time-payments)
 
 6. [Resources](#resources)
-
-
 
 Stripe is one of the most popular payment gateways, offering a seamless and secure way to handle online payments. Integrating Stripe with Laravel is straightforward and highly efficient for most projects. This guide explains the integration workflow in two parts:
 
@@ -154,7 +157,6 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 ];
-
 ```
 
 #### Step 3: Setup the Checkout Button and Route
@@ -178,7 +180,6 @@ In your `web.php` file, define the route that handles the checkout request:
 use App\Http\Controllers\PaymentController;
 
 Route::post('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
-
 ```
 
 ### Step 4: Generating the Checkout Session and Creating an Unpaid Order
@@ -265,7 +266,6 @@ class PaymentController extends Controller
         return response()->json(['url' => $checkoutSession->url]);
     }
 }
-
 ```
 
 ###### Explanation of Key Points:
@@ -360,7 +360,6 @@ public function thankYouPage(Request $request)
     // Optionally, you could redirect to a dedicated thank-you view
     return view('thank-you', ['order' => $order]);
 }
-
 ```
 
 ###### Error Handling
@@ -373,8 +372,6 @@ public function thankYouPage(Request $request)
 1. **Security Check:** Ensure the `session_id` is validated and matches an actual order in your database.
 2. **User Feedback:** Redirecting the user to a dedicated thank-you view provides a better user experience. Include order details on this page, such as an order summary or confirmation number.
 3. **Clearing the Cart:** Clearing the cart ensures the user’s session is reset after a successful transaction.
-
-
 
 ## The Necessity of Webhooks
 
@@ -534,6 +531,38 @@ public function webhook(Request $request)
 
 If the success page redirection and webhook both update the order, ensure the system handles this gracefully. Since we check the payment status before updating, there’s no harm in redundant calls; the final order state will always be **PAID**.
 
+To prevent double updates you can try atomic update like this:
+
+```php
+// Use atomic update to prevent double updates
+        $updated = Order::where('id', $order->id)
+            ->where('payment_status', '!=', PaymentStatus::PAID)
+            ->update(['payment_status' => PaymentStatus::PAID]);
+
+        if ($updated) {
+            Log::info('order '. $order->id .' updated by redirect');
+        }
+```
+
+Or you can implement a More Robust Locking Mechanism:
+
+```php
+public function updateOrderStatus($paymentId)
+{
+    DB::transaction(function () use ($paymentId) {
+        $order = Order::where('payment_id', $paymentId)
+            ->lockForUpdate() // Pessimistic locking
+            ->first();
+
+        if ($order && $order->payment_status !== PaymentStatus::PAID) {
+            $order->payment_status = PaymentStatus::PAID;
+            $order->save();
+            Log::info('Order ' . $order->id . ' updated');
+        }
+    });
+}
+```
+
 ## Using Laravel Cashier with Stripe
 
 **Laravel Cashier** is an official package from Laravel that provides a convenient wrapper for integrating Stripe and Paddle payments. While it simplifies handling subscriptions, recurring billing, and even some single payment scenarios, it is often considered overkill for basic one-time payment processing.
@@ -563,5 +592,3 @@ While Laravel Cashier is a powerful tool for subscription-based billing, it is l
 
 2. **Stripe Docs**  
    For an in-depth understanding of Stripe payment integration, the official Stripe documentation is a comprehensive resource. You can refer to the [Stripe Accept Payment Page](https://docs.stripe.com/payments/accept-a-payment) for complete details on implementing payments.
-
-
