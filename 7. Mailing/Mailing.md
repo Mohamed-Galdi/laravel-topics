@@ -1,28 +1,28 @@
 # Table of Contents
 
-1. [Configuration](#configuration)
-  - [a- RESEND integration example](#a-resend-integration-example)
+1. [Configuration](#1-configuration)
+    - [a- RESEND integration example](#a--resend-integration-example)
 
-2. [Mailables](#mailables)
+2. [Mailables](#2-mailables)
 
-3. [Email Sender](#email-sender)
-  - [a- Using the Envelope](#a-using-the-envelope)
-  - [b- Using a Global `from` Address](#b-using-a-global-from-address)
+3. [Email Sender](#3-email-sender)
+    - [a- Using the Envelope](#a--using-the-envelope)
+    - [b- Using a Global `from` Address](b--using-a-globalfromaddress)
 
-4. [Email Content](#email-content)
-  - [a- Markdown messages](#a-markdown-messages)
+4. [Email Content](#4-email-content)
+    - [a- Markdown messages](#a--markdown-messages)
 
-5. [Pass Data To View](#pass-data-to-view)
-  - [a- Public Properties](#a-public-properties)
-  - [b- with Parameter](#b-with-parameter)
+5. [Pass Data To View](#5-pass-data-to-view)
+    - [a- Public Properties](#a--public-properties)
+    - [b- with Parameter](#b--with-parameter)
 
-6. [Sending Emails](#sending-emails)
+6. [Sending Emails](#6-sending-emails)
 
-7. [Rendering Mailables](#rendering-mailables)
+7. [Rendering Mailables](#7-rendering-mailables)
 
-8. [Events](#events)
+8. [Events](#8-events)
 
-9. [Queueing Mail](#queueing-mail)
+9. [Queueing Mail](#9-queueing-mail)
 
 
 Email communication is a crucial part of modern web applications. Whether it’s sending notifications, password reset links, or newsletters, Laravel makes it a breeze to integrate email functionality into your project.
