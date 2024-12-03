@@ -7,7 +7,7 @@
 
 3. [Email Sender](#3-email-sender)
     - [a- Using the Envelope](#a--using-the-envelope)
-    - [b- Using a Global `from` Address](b--using-a-globalfromaddress)
+    - [b- Using a Global `from` Address](#b--using-a-globalfromaddress)
 
 4. [Email Content](#4-email-content)
     - [a- Markdown messages](#a--markdown-messages)
