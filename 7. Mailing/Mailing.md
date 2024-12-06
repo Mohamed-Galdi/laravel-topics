@@ -1,22 +1,22 @@
 # Table of Contents
 
 1. [Configuration](#1-configuration)
-   
+
    - [a- RESEND integration example](#a--resend-integration-example)
 
 2. [Mailables](#2-mailables)
 
 3. [Email Sender](#3-email-sender)
-   
+
    - [a- Using the Envelope](#a--using-the-envelope)
    - [b- Using a Global `from` Address](#b--using-a-globalfromaddress)
 
 4. [Email Content](#4-email-content)
-   
+
    - [a- Markdown messages](#a--markdown-messages)
 
 5. [Pass Data To View](#5-pass-data-to-view)
-   
+
    - [a- Public Properties](#a--public-properties)
    - [b- with Parameter](#b--with-parameter)
 
@@ -27,6 +27,8 @@
 8. [Events](#8-events)
 
 9. [Queueing Mail](#9-queueing-mail)
+   - [a- Using the `queue` Method](#a--using-thequeuemethod)
+   - [b- When to Use Custom Jobs](#b--when-to-use-custom-jobs)
 
 Email communication is a crucial part of modern web applications. Whether it’s sending notifications, password reset links, or newsletters, Laravel makes it a breeze to integrate email functionality into your project.
 
@@ -59,7 +61,7 @@ Below is a sample of the `config/mail.php` configuration file:
     'mailers' => [
 
         'smtp' => [
-            // ...    
+            // ...
         ],
 
         'ses' => [
@@ -128,18 +130,18 @@ MAIL_FROM_NAME="${APP_NAME}"
 
 Resend simplifies domain verification. To verify a domain you own, add the required DNS records provided by Resend to your domain settings. Once the records are approved, you can send emails from your custom domain.
 
-> **Tip:** Ensure your DNS records are correctly configured to avoid delays in verification. 
+> **Tip:** Ensure your DNS records are correctly configured to avoid delays in verification.
 
 # 2. Mailables
 
-A mailables is a class that represent a type of emails sent by your application, for example we can have a mailable for *password resseting* and another for *order shipping* and so on.
+A mailables is a class that represent a type of emails sent by your application, for example we can have a mailable for _password resseting_ and another for _order shipping_ and so on.
 
 These classes are stored in the `app/Mail` directory.
 
 You can create your mailable class using the `make:mail` Artisan command:
 
 ```shell
-php artisan make:mail OrderProcessing 
+php artisan make:mail OrderProcessing
 ```
 
 A Mailable class will contain by default those 3 methods: the `envelope`, `content`, and `attachments` method.
@@ -271,9 +273,9 @@ Typically, you will want to pass some data to your view that you can utilize whe
 
 #### a- Public Properties:
 
- First, **any <u>public</u> property** defined on your mailable class will automatically be made available to the view.
+First, **any <u>public</u> property** defined on your mailable class will automatically be made available to the view.
 
- For example, you may pass data into your mailable class's constructor and set that data to public properties defined on the class:
+For example, you may pass data into your mailable class's constructor and set that data to public properties defined on the class:
 
 ```php
 class OrderShipped extends Mailable
@@ -303,7 +305,7 @@ You should set this data to `protected` or `private` properties so the data 
 
 ```php
 class OrderShipped extends Mailable
-{    
+{
     public function __construct(
         private Order $order,
     ) {}
@@ -374,15 +376,35 @@ Remember, these events are dispatched when the mail is being *sent*, not when i
 
 # 9. Queueing Mail
 
-Since sending email messages can negatively impact the response time of your application, many developers choose to queue email messages for background sending.
+Sending email messages synchronously can slow down your application's response time, especially when handling a high volume of requests. Laravel provides built-in support for queuing mail messages, enabling them to be sent in the background to improve application performance.
 
-To queue a mail message, use the `queue` method on the `Mail` facade after specifying the message's recipients:
+## a- Using the `queue` Method
+
+To queue an email, you can use the `queue` method on the `Mail` facade after specifying the recipient. For example:
 
 ```php
 Mail::to($request->user())
     ->queue(new OrderShipped($order));
 ```
 
-This method will automatically take care of pushing a job onto the queue so the message is sent in the background.
+**<u>Why Does This Work?</u>**
 
-Since this document is not about queues, I suggest you check out this [Laravel Queues documentation](#) to learn more.
+In most cases, sending emails is handled asynchronously. To make this process easier, Laravel allows you to queue emails directly without requiring you to create a custom queue job. This works because Laravel's `Mailable` class:
+
+- **Implements the** `**ShouldQueue**` **interface**: This signals to Laravel's queuing system that the mailable should be processed asynchronously.
+
+- **Uses the** `**Queueable**` **trait**: This provides the necessary logic to handle queuing, including support for custom delays, connections, and queue names.
+
+When you call the `queue` method, Laravel automatically creates and dispatches a queueable job to send the email. You don't need to define a custom job for basic email-sending tasks.
+
+## b- When to Use Custom Jobs
+
+While the `queue` method is convenient, creating a custom job to handle email sending may be more appropriate in scenarios where:
+
+- Additional logic is required alongside sending the email, such as logging, analytics, or database updates.
+
+- You need granular control over retries, exceptions, or priorities.
+
+- You want to bundle email sending with other tasks for scalability and modularity.
+
+Learn more about setting up queues by visiting the [Laravel Queues documentation](https://github.com/Mohamed-Galdi/Laravel-Topics/tree/main/8.%20Laravel%20Queues).
