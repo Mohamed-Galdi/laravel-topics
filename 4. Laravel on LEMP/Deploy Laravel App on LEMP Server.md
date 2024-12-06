@@ -3,7 +3,7 @@
 1. [Prerequisites](#1-prerequisites)
 
 2. [Steps](#2-steps)
-   
+
    - [1. Prepare Domain](#1%EF%B8%8F%E2%83%A3-prepare-a-domain-or-sub-domain-for-the-project)
    - [2. Create Production Branch](#2%EF%B8%8F%E2%83%A3-create-prod-branch-on-the-project-remote-repository)
    - [3. Clone Project](#3%EF%B8%8F%E2%83%A3-on-the-server-cd-to-varwww-clone-the-project-and-checkout-to-prod-branch)
@@ -12,13 +12,13 @@
    - [6. Configure Environment](#6%EF%B8%8F%E2%83%A3-create-the-env-file-and-fill-in-the-configurations)
    - [7. Run Laravel Setup](#7%EF%B8%8F%E2%83%A3-now-navigate-to-the-project-folder-and-run-the-laravel-setup-commands)
    - [8. Build Frontend](#8%EF%B8%8F%E2%83%A3-install-front-end-dependencies-and-build-assets)
-   - [9. Queues with Supervisor]()
-   - [10. Configure Nginx](#9%EF%B8%8F%E2%83%A3-create-an-nginx-config-file-for-the-project)
-   - [11. SSL Setup](#1%EF%B8%8F⃣0%EF%B8%8F⃣--generate-the-ssl-certificate-using-certbot)
-   - [12. Set Permissions](#1%EF%B8%8F%E2%83%A31%EF%B8%8F%E2%83%A3-give-the-web-server-user-write-access-to-storage-and-cache)
+   - [9. Queues with Supervisor](#9%EF%B8%8F⃣-configure-laravel-queues-with-supervisor)
+   - [10. Configure Nginx](#1%EF%B8%8F⃣0%EF%B8%8F⃣-create-an-nginx-config-file-for-the-project)
+   - [11. SSL Setup](#1%EF%B8%8F⃣1%EF%B8%8F⃣--generate-the-ssl-certificate-using-certbot)
+   - [12. Set Permissions](#1%EF%B8%8F⃣2%EF%B8%8F⃣-give-the-web-server-user-write-access-to-storage-and-cache)
 
 3. [Auto-Deploy Workflow](#3-auto-deploy-workflow)
-   
+
    - [1. Add SSH Key](#1%EF%B8%8F%E2%83%A3-add-ssh-key-to-github)
    - [2. Create Deploy Script](#2%EF%B8%8F%E2%83%A3-create-the-deploy-script)
    - [3. Setup GitHub Actions](#3%EF%B8%8F%E2%83%A3-create-the-github-actions-workflow)
@@ -55,7 +55,7 @@ To host a laravel project on an Ubuntu server you must first ensure you have the
 
 &emsp;&emsp; 💠To clone the project via SSH, generate an SSH key pair, add it to GitHub, then restart the SSH agent.
 <br>
-&emsp;&emsp; 💠Run the command ``git config pull.rebase false `` to allow merging the pull requests.
+&emsp;&emsp; 💠Run the command `git config pull.rebase false ` to allow merging the pull requests.
 
 ### **4️⃣** Create a new database for that project
 
@@ -66,7 +66,7 @@ mysql -u myapp_user -p
  > exit;
 ```
 
-&emsp;&emsp; 💠  If you encounter issues with the new database permissions for **myapp_user**, you may log in as root and grant the necessary permissions:
+&emsp;&emsp; 💠 If you encounter issues with the new database permissions for **myapp_user**, you may log in as root and grant the necessary permissions:
 
 ```
 sudo mysql
@@ -204,7 +204,7 @@ sudo supervisorctl restart myapp-queue:*
 nano /etc/nginx/sites-available/myapp
 ```
 
-&emsp;&emsp; 💠  There is a starter Nginx configuration for Laravel projects in the official documentation, or you can copy the config of an existing project, but be careful not to include the SSH config part.  <br>
+&emsp;&emsp; 💠 There is a starter Nginx configuration for Laravel projects in the official documentation, or you can copy the config of an existing project, but be careful not to include the SSH config part. <br>
 &emsp;&emsp; 💠 This is a generale example:
 
 ```
@@ -255,7 +255,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-### **1️⃣1️⃣**  Generate the SSL certificate using Certbot:
+### **1️⃣1️⃣** Generate the SSL certificate using Certbot:
 
 ```
 sudo certbot --nginx --agree-tos --redirect --hsts --staple-ocsp -d myapp.domain.com --email you@email.com
@@ -303,7 +303,7 @@ We will use GitHub Actions to create a CI/CD pipeline for our auto-deploy workfl
 cat ~/.ssh/pair_name
 ```
 
-&emsp;&emsp; 💠 Then in repository of the project on github, go to ``Settings > Secretes and Variables > new repository secret`` and add it there with a name like  **DO_SSH_KEY** 
+&emsp;&emsp; 💠 Then in repository of the project on github, go to `Settings > Secretes and Variables > new repository secret` and add it there with a name like **DO_SSH_KEY**
 
 ### **2️⃣** Create the deploy script
 
@@ -312,7 +312,7 @@ nano /var/www/myapp/deploy.sh
 ```
 
 - example script:
-  
+
   ```
   #!/bin/bash
   ```
@@ -373,29 +373,28 @@ chmod +x /var/www/myapp/deploy.sh
 name: Deploy MyApp Project
 
 on:
-  push:
-    branches:
-      - prod  # Trigger only when pushing to the prod branch
+push:
+branches: - prod # Trigger only when pushing to the prod branch
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+deploy:
+runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-    
+
       - name: Copy SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DO_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-    
+
       - name: Add SSH key to the agent
         run: |
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
-    
+
       - name: Deploy to DigitalOcean
         run: |
           ssh -o StrictHostKeyChecking=no server_user@server_ip 'bash /var/www/myapp/deploy.sh'
