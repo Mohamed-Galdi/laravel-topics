@@ -41,7 +41,7 @@
     - [c- Retrying failed jobs](#c--retrying-failed-jobs)
     - [d- Ignoring Missing Models](#d--ignoring-missing-models)
 
-11. [Queue Jobs vs. Cron Jobs](#queue-jobs-vs.-cron-jobs)
+11. [Queue Jobs vs. Cron Jobs](#11-queue-jobs-vs-cron-jobs)
 
 12. [Resources](#resources)
 
