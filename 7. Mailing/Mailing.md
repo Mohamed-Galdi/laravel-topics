@@ -407,4 +407,4 @@ While the `queue` method is convenient, creating a custom job to handle email se
 
 - You want to bundle email sending with other tasks for scalability and modularity.
 
-Learn more about setting up queues by visiting the [Laravel Queues documentation](https://github.com/Mohamed-Galdi/Laravel-Topics/tree/main/8.%20Laravel%20Queues).
+Learn more about setting up queues by visiting the [Laravel Queues documentation](https://github.com/Mohamed-Galdi/Laravel-Topics/blob/main/8.%20Laravel%20Queues/laravel%20queues.md).
