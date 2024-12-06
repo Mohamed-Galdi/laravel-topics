@@ -1,20 +1,24 @@
 # Table of Contents
 
 1. [Configuration](#1-configuration)
-    - [a- RESEND integration example](#a--resend-integration-example)
+   
+   - [a- RESEND integration example](#a--resend-integration-example)
 
 2. [Mailables](#2-mailables)
 
 3. [Email Sender](#3-email-sender)
-    - [a- Using the Envelope](#a--using-the-envelope)
-    - [b- Using a Global `from` Address](#b--using-a-globalfromaddress)
+   
+   - [a- Using the Envelope](#a--using-the-envelope)
+   - [b- Using a Global `from` Address](#b--using-a-globalfromaddress)
 
 4. [Email Content](#4-email-content)
-    - [a- Markdown messages](#a--markdown-messages)
+   
+   - [a- Markdown messages](#a--markdown-messages)
 
 5. [Pass Data To View](#5-pass-data-to-view)
-    - [a- Public Properties](#a--public-properties)
-    - [b- with Parameter](#b--with-parameter)
+   
+   - [a- Public Properties](#a--public-properties)
+   - [b- with Parameter](#b--with-parameter)
 
 6. [Sending Emails](#6-sending-emails)
 
@@ -23,7 +27,6 @@
 8. [Events](#8-events)
 
 9. [Queueing Mail](#9-queueing-mail)
-
 
 Email communication is a crucial part of modern web applications. Whether it’s sending notifications, password reset links, or newsletters, Laravel makes it a breeze to integrate email functionality into your project.
 
@@ -244,13 +247,13 @@ Markdown mailables use a combination of Blade components and Markdown syntax whi
 ```php
 <x-mail::message>
 # Order Shipped
- 
+
 Your order has been shipped!
- 
+
 <x-mail::button :url="$url">
 View Order
 </x-mail::button>
- 
+
 Thanks,<br>
 {{ config('app.name') }}
 </x-mail::message>
@@ -275,13 +278,13 @@ Typically, you will want to pass some data to your view that you can utilize whe
 ```php
 class OrderShipped extends Mailable
 {
-    
+
     public $foo = 'bar';
-    
+
     public function __construct(
         public Order $order,
     ) {}
- 
+
     public function content(): Content
     {
         return new Content(
@@ -304,7 +307,7 @@ class OrderShipped extends Mailable
     public function __construct(
         private Order $order,
     ) {}
- 
+
     public function content(): Content
     {
         return new Content(
@@ -332,9 +335,9 @@ The `to` method accepts an email address, a user instance, or a collection of 
 public function send(Request $request)
     {
         $order = Order::findOrFail($request->order_id);
- 
+
         Mail::to($request->user())->send(new OrderShipped($order));
- 
+
         return 'Email Sent';
     }
 ```
