@@ -6,9 +6,9 @@
 
 3. [Queues, Jobs and Workers](#3-queues-jobs-and-workers)
 
-4. [Queue Connections and Drivers](#4-queue-connections-and-driv8ers)
+4. [Queue Connections and Drivers](#4-queue-connections-and-drivers)
    
-   - [a- Supported Queue Drivers/Connections](#a--supported-queue-drivers-/-connections)
+   - [a- Supported Queue Drivers/Connections](#a--supported-queue-driversconnections)
    
    - [b- Configuration](#b--configuration)
    
