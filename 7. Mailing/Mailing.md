@@ -27,7 +27,7 @@
 8. [Events](#8-events)
 
 9. [Queueing Mail](#9-queueing-mail)
-   - [a- Using the `queue` Method](#a--using-thequeuemethod)
+   - [a- Using the `queue` Method](#a--using-the-queue-method)
    - [b- When to Use Custom Jobs](#b--when-to-use-custom-jobs)
 
 Email communication is a crucial part of modern web applications. Whether it’s sending notifications, password reset links, or newsletters, Laravel makes it a breeze to integrate email functionality into your project.
