@@ -14,7 +14,7 @@
    - [8. Build Frontend](#8%EF%B8%8F%E2%83%A3-install-front-end-dependencies-and-build-assets)
    - [9. Queues with Supervisor](#9%EF%B8%8F⃣-configure-laravel-queues-with-supervisor)
    - [10. Configure Nginx](#1%EF%B8%8F⃣0%EF%B8%8F⃣-create-an-nginx-config-file-for-the-project)
-   - [11. SSL Setup](#1%EF%B8%8F⃣1%EF%B8%8F⃣--generate-the-ssl-certificate-using-certbot)
+   - [11. SSL Setup](#1%EF%B8%8F⃣1%EF%B8%8F⃣-generate-the-ssl-certificate-using-certbot)
    - [12. Set Permissions](#1%EF%B8%8F⃣2%EF%B8%8F⃣-give-the-web-server-user-write-access-to-storage-and-cache)
 
 3. [Auto-Deploy Workflow](#3-auto-deploy-workflow)
