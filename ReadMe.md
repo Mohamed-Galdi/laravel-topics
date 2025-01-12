@@ -12,7 +12,7 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 6. [Stripe Integration](6.%20Stripe%20Integration/Stripe%20integration.md)
 7. [Mailing](7.%20Mailing/Mailing.md)
 8. [Laravel Queues](8.%20Laravel%20Queues/laravel%20queues.md)
-9. [Cache (In Progress)]()
+9. [Laravel Cache](9.%20Laravel%20Cache/laravel%20cache.md)
 
 
 Each section is structured to give a clear overview of the topic and include examples, best practices, and additional resources.
