@@ -13,7 +13,8 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 7. [Mailing](7.%20Mailing/Mailing.md)
 8. [Laravel Queues](8.%20Laravel%20Queues/laravel%20queues.md)
 9. [Laravel Cache](9.%20Laravel%20Cache/laravel%20cache.md)
-10. [Laravel Reverb (in progress...)](#)
+10. [Dealing with Large Database  (in progress...)](#)
+11. [FilePond in VILT stack](11.%20FilePond%20in%20VILT%20stack/FilePond%20in%20VILT%20stack.md)
 
 
 Each section is structured to give a clear overview of the topic and include examples, best practices, and additional resources.
