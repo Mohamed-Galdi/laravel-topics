@@ -42,7 +42,7 @@ npm install filepond-plugin-file-validate-type
 npm install filepond-plugin-file-validate-size
 ```
 
----
+## Other useful plugins, such as `filepond-plugin-image-preview`, can be found in the [FilePond documentation](https://pqina.nl/filepond/docs/api/plugins/).
 
 ## Step 2: Create a File Upload Component
 
