@@ -10,6 +10,8 @@
   - [routes](#routes)
 - [Step 4: Using the FileUpload Component in a Parent Component](#step-4-using-the-fileupload-component-in-a-parent-component)
 - [Step 5: Handling File Upload in the Controller](#step-5-handling-file-upload-in-the-controller)
+  - [a- Directly](#a-directly)
+  - [b- Making the File Handling Reusable](#b-making-the-file-handling-reusable)
 
 ## Introduction
 
@@ -324,6 +326,8 @@ Now that we have created our `FileUpload` component, let's see how to use it in 
 
 ## Step 5: Handling File Upload in the Controller
 
+## a. Directly
+
 In the `PostController`, we handle the uploaded file by moving it from the temporary storage to the permanent storage location. Here’s how we do it:
 
 ```php
@@ -398,3 +402,55 @@ class PostController extends Controller
 ```
 
 This ensures a smooth file upload process while keeping storage clean and organized.
+
+## b. **Making the File Handling Reusable**
+
+To avoid repeating the same file handling logic across multiple places, you can extract it into a **service class** or a **helper function**.
+
+You can create a `FileService.php` inside `app/Services/`:
+
+```php
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use App\Models\TempFile;
+
+class FileService
+{
+    public static function moveTempFile(string $folder, string $destinationPath, string $title): ?string
+    {
+        $tempFile = TempFile::where('folder', $folder)->first();
+
+        if ($tempFile) {
+            $slug = Str::slug($title);
+            $uniqueName = "{$slug}-" . time() . "-" . Str::random(8) . "." . pathinfo($tempFile->name, PATHINFO_EXTENSION);
+            $filePath = "{$destinationPath}/{$uniqueName}";
+
+            Storage::disk('public')->move($tempFile->path, $filePath);
+
+            Storage::disk('public')->deleteDirectory("TempFiles/{$tempFile->folder}");
+            $tempFile->delete();
+
+            $finalFilePath = 'storage/' . $filePath;
+
+            return $finalFilePath;
+        }
+
+        return null;
+    }
+}
+```
+
+Now, your `store` method can be refactored like this:
+
+```php
+if ($request->has('image') && $request->image) {
+            $post->pdf_file = FileService::moveTempFile($request->image, "posts/{$postName}", $project->title);
+            $post->save();
+}
+```
+
+The `FileService` can be used anywhere in your Laravel project.
