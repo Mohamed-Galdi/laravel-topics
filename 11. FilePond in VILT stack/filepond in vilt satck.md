@@ -437,7 +437,7 @@ class FileService
             Storage::disk('public')->deleteDirectory("TempFiles/{$tempFile->folder}");
             $tempFile->delete();
 
-            $finalFilePath = 'storage/' . $filePath;
+            $finalFilePath = '/storage/' . $filePath;
 
             return $finalFilePath;
         }
@@ -450,9 +450,10 @@ class FileService
 Now, your `store` method can be refactored like this:
 
 ```php
+$productName = Str::slug($request->name);
+
 if ($request->has('image') && $request->image) {
-            $post->pdf_file = FileService::moveTempFile($request->image, "posts/{$postName}", $project->title);
-            $post->save();
+        $product->image = FileService::moveTempFile($request->image, "products/{$productName}", $productName . '-image');
 }
 ```
 
