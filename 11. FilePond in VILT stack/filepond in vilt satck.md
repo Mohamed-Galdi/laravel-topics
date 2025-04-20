@@ -67,8 +67,8 @@ import fr_FR from "filepond/locale/fr-fr";
 
 // Define component props
 const props = defineProps({
-    initialFile: {
-        type: [String, Object],
+    initialFiles: {
+        type: [String, Array],
         default: null,
     },
     allowedFileTypes: {
@@ -101,11 +101,20 @@ setOptions(props.locale);
 
 // Handle initial file population (for update operations)
 onMounted(() => {
-    if (props.initialFile) {
-        files.value = [{
-            source: props.initialFile,
-            options: { type: "local" },
-        }];
+    if (props.initialFiles) {
+        if (Array.isArray(props.initialFiles)) {
+            // Handle array of files
+            files.value = props.initialFiles.map(file => ({
+                source: file,
+                options: { type: "local" }
+            }));
+        } else {
+            // Handle single file
+            files.value = [{
+                source: props.initialFiles,
+                options: { type: "local" },
+            }];
+        }
     }
 });
 
