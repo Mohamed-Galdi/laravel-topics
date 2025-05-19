@@ -25,6 +25,9 @@ Code quality tools help maintain clean, reliable, and consistent codebases. In L
 - **Larastan**: Focuses on *code correctness* (finding bugs, type errors).  
   Together, they ensure your code is both visually consistent and functionally sound.
 
+### ==> *<u>Use Pint to make code pretty, Larastan to make it reliable.</u>*
+
+
 ## Differences
 
 | Aspect       | Laravel Pint                                                             | Larastan                                                                                  |
