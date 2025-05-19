@@ -148,7 +148,7 @@ Code quality tools help maintain clean, reliable, and consistent codebases. In L
 - Install via Composer:
   
   ```bash
-  composer require nunomaduro/larastan --dev
+  composer require --dev "larastan/larastan"
   ```
 
 ### Key Commands
