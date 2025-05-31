@@ -3,11 +3,7 @@
 - [Concept Intoduction](#concept-intoduction)
 - [1. Frontend Setup: International Phone Input](#1-frontend-setup-international-phone-input)
 - [2. Backend Setup: Configuring Vonage for SMS](#2-backend-setup-configuring-vonage-for-sms)
-  - [What Vonage Does](#what-vonage-does)
-  - [Step 1: Create a Vonage Account](#step-1-create-a-vonage-account)
-  - [Step 2: Install Laravel Package](#step-2-install-laravel-package)
-  - [Step 3: Add API Credentials to `.env`](#step-3-add-api-credentials-to-env)
-  - [Step 4: Configure Laravel](#step-4-configure-laravel)
+ 
 - [3. Phone Number OTP Verification](#3-phone-number-otp-verification)
 
 ## Concept Intoduction

@@ -16,7 +16,7 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 10. [Dealing with Large Database (in progress...)](#)
 11. [FilePond in VILT stack](11.%20FilePond%20in%20VILT%20stack/filepond%20in%20vilt%20satck.md)
 12. [Code Quality Tools: Pint & Larastan](12.%20%20Code%20Quality%20Tools%3B%20Pint%20%26%20Larastan/Code%20Quality%20Tools%20.md)
-13. [Send SMS](13.%20Send%20SMS/Send%20SMS%20and%20OTP%20example.md)
+13. [Send SMS](13.%20Send%20SMS/Send%20SMS%2C%20OTP%20example.md)
 
 Each section is structured to give a clear overview of the topic and include examples, best practices, and additional resources.
 
