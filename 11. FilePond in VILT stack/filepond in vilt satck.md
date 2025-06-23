@@ -54,13 +54,15 @@ We'll create a reusable Vue component to handle file uploads. This component wil
 
 ```js
 <script setup>
+// move those css imports to app.css or app.js
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import "filepond/dist/filepond.min.css";
+
 import { ref, onMounted } from "vue";
 import vueFilePond from "vue-filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-
-import "filepond/dist/filepond.min.css";
 import { router, usePage } from "@inertiajs/vue3";
 import { setOptions } from "vue-filepond";
 import fr_FR from "filepond/locale/fr-fr";
@@ -73,7 +75,14 @@ const props = defineProps({
     },
     allowedFileTypes: {
         type: Array,
-        default: () => ["application/pdf"],
+         default: () => [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/svg+xml",
+            "image/webp",
+            "image/avif",
+        ], // add more file types as needed
     },
     allowMultiple: {
         type: Boolean,
