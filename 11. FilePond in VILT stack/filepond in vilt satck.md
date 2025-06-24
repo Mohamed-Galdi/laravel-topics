@@ -65,7 +65,8 @@ import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import { router, usePage } from "@inertiajs/vue3";
 import { setOptions } from "vue-filepond";
-import fr_FR from "filepond/locale/fr-fr";
+// import ar_AR from "filepond/locale/ar-ar";
+// import fr_FR from "filepond/locale/fr-fr";
 
 // Define component props
 const props = defineProps({
@@ -92,10 +93,10 @@ const props = defineProps({
         type: Number,
         default: 1,
     },
-    locale: {
-        type: Object,
-        default: () => fr_FR,
-    },
+    // locale: {
+    //     type: Object,
+    //     default: () => fr_FR,
+    // },
 });
 
 // Reactive variables
@@ -264,58 +265,39 @@ Route::post('/revert/{id}', [TempFileController::class, 'revert'])->name('file.r
 
 ## Step 4: Using the FileUpload Component in a Parent Component
 
-Now that we have created our `FileUpload` component, let's see how to use it in a parent component like `Index.vue`. This section will demonstrate how to integrate the component for both creating and editing posts.
+Now that we have created our `FileUpload` component, let's see how to use it in a parent component like `create.vue` and `update.vue` pages.
+
+### create.vue
 
 ```html
 <script setup>
   import { useForm } from "@inertiajs/vue3";
   import { ref } from "vue";
   import FileUpload from "@/Components/FileUpload.vue";
-  import es_ES from "filepond/locale/es-ES";
 
-  // ################################################# Create Post
-  const tempFile = ref(null);
+  // ############################################## File upload
+  const tempFile = ref([]);
+
   function handleFileUploaded(fileFolder) {
-    tempFile.value = fileFolder;
+    tempFile.value.push(fileFolder);
   }
 
-  function handleFileReverted() {
-    tempFile.value = null;
+  function handleFileReverted(uniqueId) {
+    tempFile.value = tempFile.value.filter((filePath) => {
+      return !filePath.includes(uniqueId);
+    });
   }
+  // ################################################# Create Post
 
   const createForm = useForm({
     title: "",
     description: "",
-    postFileId: "",
+    images: [],
   });
 
   function handleCreatePost() {
-    createForm.postFileId = tempFile.value;
+    createForm.images = tempFile.value;
     createForm.post(route("posts.store"));
-  }
-
-  // ################################################# Edit Post
-  const editForm = useForm({
-    id: null,
-    title: "",
-    description: "",
-    postFileId: "",
-    postImage: "",
-  });
-
-  function openEditModal(post) {
-    editForm.reset();
-    editForm.id = post.id;
-    editForm.title = post.title;
-    editForm.description = post.description;
-    editForm.postImage = post.post_image
-      ? `${appUrl}storage/${post.post_image}`
-      : "";
-  }
-
-  function handleEditPost() {
-    editForm.postFileId = tempFile.value;
-    editForm.post(route("posts.update", { id: editForm.id }));
   }
 </script>
 
@@ -323,21 +305,8 @@ Now that we have created our `FileUpload` component, let's see how to use it in 
   <div>
     <!-- Create Post -->
     <FileUpload
-      :locale="es_ES"
-      :allowed-file-types="['application/pdf']"
       :allow-multiple="true"
       :max-files="3"
-      @file-uploaded="handleFileUploaded"
-      @file-reverted="handleFileReverted"
-    />
-
-    <!-- Edit Post -->
-    <FileUpload
-      :locale="es_ES"
-      :allowed-file-types="['application/pdf']"
-      :allow-multiple="true"
-      :max-files="3"
-      :initial-file="editForm.postImage"
       @file-uploaded="handleFileUploaded"
       @file-reverted="handleFileReverted"
     />
@@ -345,86 +314,199 @@ Now that we have created our `FileUpload` component, let's see how to use it in 
 </template>
 ```
 
-## Step 5: Handling File Upload in the Controller
+### update.vue
 
-## a. Directly
+```html
+<script setup>
+  import { useForm } from "@inertiajs/vue3";
+  import { ref } from "vue";
+  import FileUpload from "@/Components/FileUpload.vue";
 
-In the `PostController`, we handle the uploaded file by moving it from the temporary storage to the permanent storage location. Here’s how we do it:
+  const props = defineProps({
+    post: {
+      type: Object,
+      required: true,
+    },
+  });
 
-```php
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use App\Models\Post;
-use App\Models\TempFile;
+  const post = ref(props.post);
 
-class PostController extends Controller
-{
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|unique:posts,title',
-            'postFileId' => 'required',
-        ]);
+  // ################################################# Update Post
+  const postImages = post.value.images.map((image) => {
+    return "/" + image.path;
+  });
 
-        $post = Post::create([ 'title' => $request->title ]);
+  const updateForm = useForm({
+    title: post.value.title,
+    description: post.value.description,
+    images: postImages, // Existing images
+    newImages: [], // New images added during update
+    removedImages: [],
+  });
 
-        $this->moveFileFromTemp($post, $request->postFileId);
+  function handleUpdatePost() {
+    updateForm.patch(route("posts.update", post.value.id));
+  }
 
-        return response()->json(['message' => 'Post created successfully']);
-    }
+  // ############################################## File upload
+  // Track new and removed images
+  const tempFile = ref([...postImages]); // Initialize with existing images
 
-    public function update(Request $request, $id)
-    {
-        $request->validate(['title' => 'required|unique:posts,title,' . $id]);
+  function handleFileUploaded(fileFolder) {
+    tempFile.value.push(fileFolder);
+    updateForm.newImages.push(fileFolder);
+    updateForm.images = tempFile.value;
+  }
 
-        $post = Post::findOrFail($id);
-        $post->title = $request->title;
+  function handleFileRemoved(imagePath) {
+    tempFile.value = tempFile.value.filter(
+      (filePath) => filePath !== imagePath
+    );
+    updateForm.removedImages.push(imagePath);
+    updateForm.images = tempFile.value;
+  }
 
-        if ($request->postFileId) {
-            $this->deleteOldFile($post);
-            $this->moveFileFromTemp($post, $request->postFileId);
-        } elseif ($request->postImage === null) {
-            $this->deleteOldFile($post);
-        }
+  function handleFileReverted(uniqueId) {
+    tempFile.value = tempFile.value.filter(
+      (filePath) => !filePath.includes(uniqueId)
+    );
+    updateForm.newImages = updateForm.newImages.filter(
+      (filePath) => !filePath.includes(uniqueId)
+    );
+    updateForm.images = tempFile.value;
+  }
+</script>
 
-        $post->save();
-
-        return response()->json(['message' => 'Post updated successfully']);
-    }
-
-    private function moveFileFromTemp(Post $post, $folder)
-    {
-        $tempFile = TempFile::where('folder', $folder)->first();
-        if (!$tempFile) return;
-
-        $slug = Str::slug($post->title);
-        $postPath = "posts/{$post->id}-{$slug}/";
-
-        Storage::disk('public')->move($tempFile->path, $postPath . $tempFile->name);
-        $post->pdf_file = $postPath . $tempFile->name;
-        $post->save();
-
-        Storage::disk('public')->deleteDirectory('TempFiles/' . $tempFile->folder);
-        $tempFile->delete();
-    }
-
-    private function deleteOldFile(Post $post)
-    {
-        if ($post->pdf_file) {
-            $oldDirectory = dirname($post->pdf_file);
-            if (Storage::disk('public')->exists($oldDirectory)) {
-                Storage::disk('public')->deleteDirectory($oldDirectory);
-            }
-            $post->pdf_file = null;
-        }
-    }
-}
+<template>
+  <div>
+    <!-- Update Post -->
+    <FileUpload
+      @file-uploaded="handleFileUploaded"
+      @file-reverted="handleFileReverted"
+      @file-removed="handleFileRemoved"
+      :initialFiles="postImages"
+      :allowMultiple="true"
+      :maxFiles="3"
+      :maxFileSize="5 * 1024 * 1024"
+    />
+  </div>
+</template>
 ```
 
-This ensures a smooth file upload process while keeping storage clean and organized.
+### index.vue (handles both create and update)
 
-## b. **Making the File Handling Reusable**
+```html
+<script setup>
+  import { useForm } from "@inertiajs/vue3";
+  import { ref } from "vue";
+  import FileUpload from "@/Components/FileUpload.vue";
+
+  const props = defineProps({
+    post: {
+      type: Object,
+      default: null, // null when creating, object when updating
+    },
+  });
+
+  // ############################################## CREATE FORM
+  const createTempFiles = ref([]);
+  const createForm = useForm({
+    title: "",
+    description: "",
+    images: [],
+  });
+
+  function handleCreateFileUploaded(fileFolder) {
+    createTempFiles.value.push(fileFolder);
+  }
+
+  function handleCreateFileReverted(uniqueId) {
+    createTempFiles.value = createTempFiles.value.filter((filePath) => {
+      return !filePath.includes(uniqueId);
+    });
+  }
+
+  function handleCreatePost() {
+    createForm.images = createTempFiles.value;
+    createForm.post(route("posts.store"));
+  }
+
+  // ############################################## UPDATE FORM
+  const updateTempFiles = ref([]);
+  const updateForm = ref(null);
+
+  // Initialize update form if post exists
+  if (props.post) {
+    const postImages = props.post.images.map((image) => "/" + image.path);
+    updateTempFiles.value = [...postImages];
+
+    updateForm.value = useForm({
+      title: props.post.title,
+      description: props.post.description,
+      images: postImages,
+      newImages: [],
+      removedImages: [],
+    });
+  }
+
+  function handleUpdateFileUploaded(fileFolder) {
+    updateTempFiles.value.push(fileFolder);
+    updateForm.value.newImages.push(fileFolder);
+    updateForm.value.images = updateTempFiles.value;
+  }
+
+  function handleUpdateFileRemoved(imagePath) {
+    updateTempFiles.value = updateTempFiles.value.filter(
+      (filePath) => filePath !== imagePath
+    );
+    updateForm.value.removedImages.push(imagePath);
+    updateForm.value.images = updateTempFiles.value;
+  }
+
+  function handleUpdateFileReverted(uniqueId) {
+    updateTempFiles.value = updateTempFiles.value.filter(
+      (filePath) => !filePath.includes(uniqueId)
+    );
+    updateForm.value.newImages = updateForm.value.newImages.filter(
+      (filePath) => !filePath.includes(uniqueId)
+    );
+    updateForm.value.images = updateTempFiles.value;
+  }
+
+  function handleUpdatePost() {
+    updateForm.value.post(route("posts.update", props.post.id));
+  }
+
+</script>
+
+<template>
+  <div>
+    <!-- CREATE FORM -->
+    <FileUpload
+      key="create-upload"
+      :allow-multiple="true"
+      :max-files="3"
+      @file-uploaded="handleCreateFileUploaded"
+      @file-reverted="handleCreateFileReverted"
+    />
+
+    <!-- UPDATE FORM -->
+    <FileUpload
+      key="update-upload"
+      :initial-files="post?.images?.map(img => '/' + img.path) || []"
+      :allow-multiple="true"
+      :max-files="3"
+      @file-uploaded="handleUpdateFileUploaded"
+      @file-reverted="handleUpdateFileReverted"
+      @file-removed="handleUpdateFileRemoved"
+    />
+  </div>
+</template>
+```
+
+## Step 5: Handling File Upload in the Controller
+
+### a. FileService
 
 To avoid repeating the same file handling logic across multiple places, you can extract it into a **service class** or a **helper function**.
 
@@ -465,14 +547,78 @@ class FileService
 }
 ```
 
-Now, your `store` method can be refactored like this:
+### b. On the controller
+
+The `store` method can be like this:
 
 ```php
-$productName = Str::slug($request->name);
-
-if ($request->has('image') && $request->image) {
-        $product->image = FileService::moveTempFile($request->image, "products/{$productName}", $productName . '-image');
+foreach ($request->images as $image) {
+    $path = FileService::moveTempFile($image, "post_images/{$postImagesFolderName}", $post->id);
+    $post->images()->create(['path' => $path,]);
 }
 ```
 
-The `FileService` can be used anywhere in your Laravel project.
+The `update` method can be like this:
+
+```php
+// Handle removed images
+    if ($request->removedImages) {
+        // Fix path format to match disk structure
+        $imagePaths = array_map(function ($path) {
+            return preg_replace('#^/?storage/#', '', $path);
+        }, $request->removedImages);
+        // Bulk delete from database
+        $post->images()->whereIn('path', array_map(fn ($path) => 'storage/'.$path, $imagePaths))->delete();
+        // Delete from storage
+        foreach ($imagePaths as $imagePath) {
+            if (Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+                // Clean up empty folders
+                $folderPath = dirname($imagePath);
+                if (
+                    Storage::disk('public')->exists($folderPath) &&
+                    count(Storage::disk('public')->files($folderPath)) === 0
+                ) {
+                    Storage::disk('public')->deleteDirectory($folderPath);
+                }
+            } else {
+                Log::warning("Image not found in storage: {$imagePath}");
+            }
+        }
+    }
+    // Handle new images
+    if ($request->newImages) {
+        $folderName = $this->getImageFolder($request->images, $post->id);
+        foreach ($request->newImages as $image) {
+            // Corrected parameter order to match FileService
+            $path = FileService::moveTempFile($image, "post_images/{$folderName}", $post->id);
+            if ($path) {
+                $post->images()->create(['path' => $path]);
+            } else {
+                Log::warning("Failed to move temporary file: {$image}");
+            }
+        }
+    }
+
+    // another method in the controller
+    private function getImageFolder(array $images, string $propertyId): string
+    {
+        // Extract only the non-temporary images (those that already have paths)
+        $existingImages = array_filter($images, function ($image) {
+            return is_string($image) && strpos($image, 'storage/property_images/') !== false;
+        });
+
+        // If we have existing images, extract the folder name from the first one
+        if (! empty($existingImages)) {
+            $firstImage = reset($existingImages);
+
+            // Extract folder name using regex - matches the pattern in storage/property_images/FOLDER_NAME/filename
+            if (preg_match('#property_images/([^/]+)/#', $firstImage, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        // If no existing folder found, create a new one with a simpler unique name
+        return 'property_'.$propertyId.'_'.Str::random(8);
+    }
+```
