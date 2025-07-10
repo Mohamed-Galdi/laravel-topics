@@ -173,6 +173,8 @@ sudo ufw status                    # Check active rules
 
 Now, visit your server's IP address in your browser. You should see the default Nginx welcome page.
 
+![alt text](<nginx default page.webp>)
+
 ##### 🌐 How Nginx Works with Laravel
 
 Nginx receives HTTP requests from the browser and **forwards them to PHP-FPM**, which processes Laravel’s logic and returns a response. Nginx then serves that response to the browser. This flow is fast, secure, and scalable.
@@ -437,6 +439,8 @@ Once these additional tools are installed, your server is fully prepared to depl
 ### a. Prepare a Domain or Subdomain
 
 On your [DigitalOcean](https://m.do.co/c/ea1b6a0cfa31) dashboard, create a new **A record** pointing your domain or subdomain to your droplet's IP address.
+
+![alt text](<digitalocean link domain to droplet.webp>)
 
 ### b. Clone the Laravel Project
 
