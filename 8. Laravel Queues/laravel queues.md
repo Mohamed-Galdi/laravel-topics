@@ -73,7 +73,7 @@ Queues, jobs and workers are the main concepts and terms in task queuing in Lara
 - **Queues**: Queues are named channels where jobs are placed for processing. You can configure multiple queues to prioritise and organise tasks based on their importance and resource requirements.
 - **Workers**: Workers are processes or threads responsible for executing queued jobs. They continuously monitor the task queue and pick up jobs for execution.
 
-<img src="queues%20illustration.png" title="" alt="" width="652">
+<img src="queues%20illustration.webp" title="" alt="" width="652">
 
 # 4. Queue Connections and Drivers
 

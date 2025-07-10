@@ -1,109 +1,569 @@
 # Table of Contents
 
-1. [Prerequisites](#1-prerequisites)
+1. [1. Preparing the LEMP stack server](#1-preparing-the-lemp-stack-server)
 
-2. [Steps](#2-steps)
+   - [a. L for Linux](#a-l-for-linux)
+   - [b. E for NginX](#b-e-for-nginx)
+   - [c. M for MySQL](#c-m-for-mysql)
+   - [d. P for PHP](#d-p-for-php)
+   - [e. Additional Requirements](#e-additional-requirements)
 
-   - [1. Prepare Domain](#1%EF%B8%8F%E2%83%A3-prepare-a-domain-or-sub-domain-for-the-project)
-   - [2. Create Production Branch](#2%EF%B8%8F%E2%83%A3-create-prod-branch-on-the-project-remote-repository)
-   - [3. Clone Project](#3%EF%B8%8F%E2%83%A3-on-the-server-cd-to-varwww-clone-the-project-and-checkout-to-prod-branch)
-   - [4. Create Database](#4%EF%B8%8F%E2%83%A3-create-a-new-database-for-that-project)
-   - [5. Set Folder Ownership](#5%EF%B8%8F%E2%83%A3-assign-ownership-of-the-project-folder-to-the-current-user)
-   - [6. Configure Environment](#6%EF%B8%8F%E2%83%A3-create-the-env-file-and-fill-in-the-configurations)
-   - [7. Run Laravel Setup](#7%EF%B8%8F%E2%83%A3-now-navigate-to-the-project-folder-and-run-the-laravel-setup-commands)
-   - [8. Build Frontend](#8%EF%B8%8F%E2%83%A3-install-front-end-dependencies-and-build-assets)
-   - [9. Queues with Supervisor](#9%EF%B8%8F⃣-configure-laravel-queues-with-supervisor)
-   - [10. Configure Nginx](#1%EF%B8%8F⃣0%EF%B8%8F⃣-create-an-nginx-config-file-for-the-project)
-   - [11. SSL Setup](#1%EF%B8%8F⃣1%EF%B8%8F⃣-generate-the-ssl-certificate-using-certbot)
-   - [12. Set Permissions](#1%EF%B8%8F⃣2%EF%B8%8F⃣-give-the-web-server-user-write-access-to-storage-and-cache)
+2. [2. Deploy the Laravel Project](#2-deploy-the-laravel-project)
 
-3. [Auto-Deploy Workflow](#3-auto-deploy-workflow)
+   - [a. Prepare a Domain or Subdomain](#a-prepare-a-domain-or-subdomain)
+   - [b. Clone the Laravel Project](#b-clone-the-laravel-project)
+   - [c. Create a MySQL Database](#c-create-a-mysql-database)
+   - [d. Set Directory Ownership](#d-set-directory-ownership)
+   - [e. Configure the Environment File](#e-configure-the-environment-file)
+   - [f. Run Laravel Setup Commands](#f-run-laravel-setup-commands)
+   - [g. Build Frontend Assets](#g-build-frontend-assets)
+   - [h. Configure Laravel Queues with Supervisor](#h-configure-laravel-queues-with-supervisor)
+   - [i. Create an Nginx config file for the project](#i-create-an-nginx-config-file-for-the-project)
+   - [j. Generate the SSL certificate using Certbot:](#j-generate-the-ssl-certificate-using-certbot)
+   - [j. Set Proper Permissions for Laravel](#j-set-proper-permissions-for-laravel)
 
-   - [1. Add SSH Key](#1%EF%B8%8F%E2%83%A3-add-ssh-key-to-github)
-   - [2. Create Deploy Script](#2%EF%B8%8F%E2%83%A3-create-the-deploy-script)
-   - [3. Setup GitHub Actions](#3%EF%B8%8F%E2%83%A3-create-the-github-actions-workflow)
+3. [3. Setting Up CI/CD for Laravel Deployment](#3-setting-up-cicd-for-laravel-deployment)
 
-# 1. PREREQUISITES
+   - [Option 1: Simple Auto-Deploy with GitHub Webhook](#option-1-simple-auto-deploy-with-github-webhook)
+   - [Option 2: Laravel Envoy + GitHub Actions](#option-2-laravel-envoy--github-actions)
 
-To host a laravel project on an Ubuntu server you must first ensure you have the following things:
 
-✅ Ubuntu server with a sudo-enabled non-root user and a firewall (UFW).
+In this comprehensive guide, we’ll walk through the process of deploying a Laravel project on a **LEMP stack**—a powerful and popular environment made up of **Linux**, **Nginx**, **MySQL**, and **PHP**. We’ll use a fresh **Ubuntu VPS from DigitalOcean** as our server, and cover everything from initial setup to production-ready deployment.
 
-✅ Domain name or sub-domain pointed to the server IP.
+Along the way, you’ll learn:
 
-✅ Nginx installed and NginxFull enabled on ufw. firewall.
+- What the LEMP stack is and why it’s used for Laravel
+  
+- How to prepare your server with Nginx, MySQL, PHP, Composer, Node.js, and other essentials
+  
+- How to securely deploy your Laravel codebase
+  
+- How to configure your environment, file permissions, and storage
+  
+- And finally, how to set up a basic **CI/CD pipeline** to streamline future deployments
+  
 
-✅ MySQL server installed, and a non-root user.
+## 1. Preparing the LEMP stack server
 
-✅ PHP and PHP-FPM installed and running ( `sudo service php8.3-fpm status `)
+### a. L for Linux
 
-✅ All php extensions required for laravel, ex:
+Linux is the foundation of the LEMP stack. The most commonly used distribution for servers is **Ubuntu**, thanks to its stability, security, and community support.
 
-    sudo apt install openssl php8.3-bcmath php8.3-curl php8.3-json php8.3-mbstring php8.3-mysql php8.3-tokenizer php8.3-xml php8.3-zip
+If you’re using [DigitalOcean](https://m.do.co/c/ea1b6a0cfa31), you can create a VPS (called a *Droplet*) in just a few steps:
 
-✅ Certbot installed for ssl generation.
+- Choose a region
+  
+- Select **Ubuntu 22.04 LTS** as the image
+  
+- Pick your plan (CPU, RAM, storage)
+  
+- Set **SSH** as the authentication method
+  
 
-✅ Git user for auto-deployment
+Once your droplet is created, connect to it via SSH as the root user:
 
-# 2. STEPS
-
-### **1️⃣** Prepare a domain or sub-domain for the project.
-
-### **2️⃣** Create 'prod' branch on the project remote repository.
-
-### **3️⃣** On the server, cd to **/var/www**, clone the project and checkout to prod branch.
-
-&emsp;&emsp; 💠To clone the project via SSH, generate an SSH key pair, add it to GitHub, then restart the SSH agent.
-<br>
-&emsp;&emsp; 💠Run the command `git config pull.rebase false ` to allow merging the pull requests.
-
-### **4️⃣** Create a new database for that project
-
+```bash
+ssh root@your_server_ip
 ```
+
+To use a specific private key:
+
+```bash
+ssh -i ~/.ssh/your_key root@your_server_ip
+```
+
+If your key is password-protected, you’ll be prompted to enter it.
+
+##### ✅ Create a Non-Root User
+
+Running everything as `root` is dangerous—it has full access and can break things with one wrong command. Let’s create a safer user:
+
+```bash
+adduser your_name
+```
+
+Now grant the new user administrative (sudo) access:
+
+```bash
+usermod -aG sudo your_name
+```
+
+To allow the new user to connect via SSH:
+
+```bash
+su - your_name               # Switch to the new user
+mkdir -p ~/.ssh              # Create .ssh directory
+chmod 700 ~/.ssh             # Set proper permissions
+nano ~/.ssh/authorized_keys  # Paste your public key here
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Now you can log in as the new user:
+
+```bash
+ssh your_name@your_server_ip
+```
+
+Once your new user can connect via SSH, it's a good idea to disable direct root login for added security:
+
+1. Open the SSH configuration file:
+  
+  ```bash
+  sudo nano /etc/ssh/sshd_config
+  ```
+  
+2. Find the line:
+  
+  ```nginx
+  PermitRootLogin yes
+  ```
+  
+  And change it to:
+  
+  ```nginx
+  PermitRootLogin no
+  ```
+  
+3. Save and exit (`Ctrl + O`, then `Enter`, then `Ctrl + X`).
+  
+4. Apply the changes:
+  
+  ```bash
+  sudo systemctl restart ssh
+  ```
+  
+
+From now on, only non-root users with valid SSH keys will be able to connect. If anything goes wrong, you can still use the DigitalOcean console to regain access.
+
+Ubuntu includes **UFW** (Uncomplicated Firewall) to help manage firewall rules easily. Before enabling it, allow SSH connections:
+
+```bash
+ufw allow OpenSSH
+ufw enable
+ufw status
+```
+
+This ensures you won’t get locked out when the firewall is turned on.
+
+## b. E for NginX
+
+**Nginx** (pronounced "Engine-X") is a high-performance web server that also acts as a **reverse proxy**, **load balancer**, and **HTTP cache**. In the LEMP stack, it’s responsible for handling web traffic and serving your Laravel application to users.
+
+To install Nginx:
+
+```bash
+sudo apt update
+sudo apt install nginx -y
+```
+
+On most systems, Nginx will start automatically after installation. If not, you can start and enable it manually:
+
+```bash
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
+
+Since **UFW** (Uncomplicated Firewall) is enabled, you must allow web traffic:
+
+```bash
+sudo ufw app list                  # Show recognized services
+sudo ufw allow 'Nginx Full'        # Allow HTTP (80) and HTTPS (443)
+sudo ufw status                    # Check active rules
+```
+
+Now, visit your server's IP address in your browser. You should see the default Nginx welcome page.
+
+##### 🌐 How Nginx Works with Laravel
+
+Nginx receives HTTP requests from the browser and **forwards them to PHP-FPM**, which processes Laravel’s logic and returns a response. Nginx then serves that response to the browser. This flow is fast, secure, and scalable.
+
+##### 📁 Understanding Nginx Directory Structure
+
+In Ubuntu, web projects are typically stored in `/var/www/`. Nginx uses a modular configuration approach where each website gets its own configuration file. This makes managing multiple projects much easier.
+
+The main Nginx configuration files are located in `/etc/nginx/`:
+
+- **nginx.conf** - The main configuration file that defines global settings like worker processes, connection limits, and includes other configuration files
+- **sites-available/** - Contains configuration files for all your websites (enabled or disabled)
+- **sites-enabled/** - Contains symbolic links to active site configurations from sites-available
+
+The `nginx.conf` file includes this important line: `include /etc/nginx/sites-enabled/*;` which tells Nginx to load all configuration files from the sites-enabled directory.
+
+The sites-available/sites-enabled pattern isn't mandatory, but it's a best practice that allows you to:
+
+- Keep all site configurations organized in sites-available
+- Enable sites by creating symbolic links to sites-enabled
+- Disable sites by removing their symbolic links (without deleting the configuration)
+
+Here's an example Laravel site configuration:
+
+```nginx
+# this config file must be at: /etc/nginx/sites-availabe
+server {
+    listen 80;
+    server_name your_domain.com www.your_domain.com;
+    root /var/www/laravel/public;
+
+    index index.php index.html;
+
+    # Handle Laravel's pretty URLs
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Process PHP files
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    # Deny access to .htaccess files
+    location ~ /\.ht {
+        deny all;
+    }
+
+    # Logging
+    error_log /var/log/nginx/laravel_error.log;
+    access_log /var/log/nginx/laravel_access.log;
+}
+```
+
+To activate your Laravel config:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/your_project /etc/nginx/sites-enabled/
+sudo nginx -t    # Test the configuration
+sudo systemctl reload nginx
+```
+
+Laravel requires specific file permissions for its storage and cache directories. The web server needs write access to these folders:
+
+```bash
+sudo chown -R www-data:www-data /var/www/laravel/storage
+sudo chown -R www-data:www-data /var/www/laravel/bootstrap/cache
+```
+
+> `www-data` is the default user group under which Nginx (and most web services) run.
+
+### c. M for **MySQL**
+
+**MySQL** is a powerful open-source relational database management system (RDBMS). In a Laravel project, it stores and manages all your application’s data—such as users, posts, orders, and more.
+
+Laravel uses **Eloquent ORM**, which makes it easy to interact with the database using PHP code instead of writing raw SQL queries. But before that, we need to install and configure MySQL on the server.
+
+To install MySQL on Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install mysql-server -y
+```
+
+After installation, check that the service is running:
+
+```bash
+sudo systemctl status mysql
+```
+
+##### 🔐 Securing the MySQL Installation
+
+MySQL includes a security script to set important defaults like root password, removing test users, and disabling remote root login:
+
+```bash
+sudo mysql_secure_installation
+```
+
+Follow the prompts:
+
+- Set a root password (if not already set)
+  
+- Remove anonymous users
+  
+- Disallow remote root login
+  
+- Remove the test database
+  
+- Reload privilege tables
+  
+
+> 📝 If you're unsure about any step, choosing the recommended defaults is usually safe.
+
+### 👤 Creating a Database and User for Your Project
+
+Log in to the MySQL shell:
+
+```bash
+sudo mysql
+```
+
+Then run the following commands (replace with your actual values):
+
+```sql
+CREATE DATABASE your_project CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE USER 'project_user'@'localhost' IDENTIFIED BY 'strong_password';
+
+GRANT ALL PRIVILEGES ON your_project.* TO 'project_user'@'localhost';
+
+FLUSH PRIVILEGES;
+
+EXIT;
+```
+
+This creates a dedicated database and user for your Laravel project.
+
+### d. P for **PHP**
+
+**PHP** is the programming language that powers Laravel. It runs behind the scenes to process requests, interact with the database, and return responses through Nginx.
+
+Laravel requires **PHP 8.1 or higher** and several essential extensions. Let’s install PHP and everything Laravel needs to run smoothly.
+
+First, install PHP and commonly required extensions:
+
+```shell
+sudo apt update
+sudo apt install php php-fpm php-mysql php-curl php-mbstring php-xml php-bcmath php-zip php-cli php-common php-tokenizer unzip -y
+```
+
+**Explanation of some key extensions:**
+
+- `php-mysql`: Required to connect to MySQL
+  
+- `php-mbstring`: Handles multi-byte strings (used by Laravel)
+  
+- `php-xml`: Required for tasks like config caching
+  
+- `php-curl`, `php-bcmath`, `php-zip`: Commonly needed by Laravel packages
+  
+
+After installation, verify the PHP version:
+
+```bash
+php -v
+```
+
+##### PHP-FPM Integration with Nginx
+
+Nginx does **not** process PHP directly. Instead, it passes PHP requests to **PHP-FPM** (FastCGI Process Manager). This is already installed via `php-fpm`.
+
+Make sure the service is running:
+
+```shell
+sudo systemctl status php8.3-fpm
+```
+
+> ⚠️ Replace `php8.3-fpm` with your installed version if it differs.
+
+You’ve already configured Nginx to forward `.php` requests to PHP-FPM in the earlier step. At this point, Nginx and PHP are now working together.
+
+##### 📦 Installing Composer
+
+**Composer** is the official PHP dependency manager. Laravel and many PHP tools rely on it to install and manage packages.
+
+Here’s how to install Composer globally:
+
+```bash
+cd ~
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+```
+
+Now move it to a global location so you can use it system-wide:
+
+```bash
+sudo mv composer.phar /usr/local/bin/composer
+```
+
+Verify installation:
+
+```bash
+composer --version
+```
+
+### e. Additional Requirements
+
+Besides the core LEMP stack, some additional tools are commonly required for a complete Laravel deployment. This includes tools for frontend asset building and securing your application with HTTPS.
+
+##### 📦 Node.js & NPM (via NVM)
+
+Laravel uses tools like **Vite**, **TailwindCSS** to compile frontend assets. These tools require **Node.js** and **npm**.
+
+We’ll use **NVM (Node Version Manager)** to install Node.js in a flexible and upgradeable way.
+
+1. Install NVM:
+  
+  ```bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  ```
+  
+2. Load NVM into your current shell:
+  
+  ```bash
+  export NVM_DIR="$HOME/.nvm"
+  source "$NVM_DIR/nvm.sh"
+  ```
+  
+3. Install the latest LTS version of Node.js:
+  
+  ```bash
+  nvm install --lts
+  ```
+  
+4. Confirm installation:
+  
+  ```bash
+  node -v
+  npm -v
+  ```
+  
+
+##### 🔐 Certbot (Free SSL from Let’s Encrypt)
+
+To secure your Laravel site with **HTTPS**, we’ll use **Certbot**, a free and automated tool from Let’s Encrypt.
+
+Install Certbot and the Nginx plugin:
+
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+```
+
+Once these additional tools are installed, your server is fully prepared to deploy and run a modern Laravel application, both backend and frontend, over a secure HTTPS connection
+
+## 2. Deploy the Laravel Project
+
+### a. Prepare a Domain or Subdomain
+
+On your [DigitalOcean](https://m.do.co/c/ea1b6a0cfa31) dashboard, create a new **A record** pointing your domain or subdomain to your droplet's IP address.
+
+### b. Clone the Laravel Project
+
+SSH into your server and move into the web root directory:
+
+```bash
+cd /var/www
+```
+
+Then clone your project:
+
+```bash
+git clone git@github.com:your-username/your-repo.git myapp
+```
+
+If you're using SSH authentication, make sure to:
+
+- Generate an SSH key (`ssh-keygen`)
+  
+- Add the public key to GitHub/GitLab under your account settings
+  
+- Start the SSH agent (`eval "$(ssh-agent -s)"`) and add your key (`ssh-add ~/.ssh/your_key`)
+  
+
+Disable Git pull rebase mode (optional):
+
+```bash
+git config pull.rebase false
+```
+
+### c. Create a MySQL Database
+
+Log into MySQL, Then create a new database:
+
+```sql
 mysql -u myapp_user -p
  > show databases;
  > create database myapp;
  > exit;
 ```
 
-&emsp;&emsp; 💠 If you encounter issues with the new database permissions for **myapp_user**, you may log in as root and grant the necessary permissions:
+If you encounter issues with the new database permissions for **myapp_user**, you may log in as root and grant the necessary permissions:
 
-```
+```sql
 sudo mysql
  > grant all privileges on myapp.* to 'myapp_user'@'%';
  > flush privileges;
  > exit;
 ```
 
-### **5️⃣** Assign ownership of the project folder to the current user:
+### d. Set Directory Ownership
 
-```
+Make sure the current user owns the project directory:
+
+```bash
 sudo chown -R $USER:$USER /var/www/myapp
 ```
 
-### **6️⃣** Create the .env file and fill in the configurations:
+### e. Configure the Environment File
 
-```
+Navigate into your project and copy the `.env` file:
+
+```bash
 cp .env.example .env
 ```
 
-### **7️⃣** Now navigate to the project folder and run the Laravel setup commands:
+Update the following key variables:
 
-```
-composer install
+- `APP_NAME` - Your application name
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_URL` - Your domain URL
+- `DB_DATABASE=myapp`
+- `DB_USERNAME=myapp_user`
+- `DB_PASSWORD` - Your database password
+
+### f. Run Laravel Setup Commands
+
+```bash
+composer install --no-dev --optimize-autoloader
 php artisan key:generate
 php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 php artisan migrate:fresh --seed --force
 ```
 
-### **8️⃣** Install front-end dependencies and build assets
+### g. Build Frontend Assets
 
-```
+Install Node.js dependencies and build assets:
+
+```bash
 npm install
 npm run build
 ```
 
-### **9️⃣** Configure Laravel Queues with Supervisor
+Running heavy commands like `npm run build` can lead to memory issues if your server has low RAM (e.g., 1GB). A simple workaround is to stop other services to free up RAM temporarily, then restart them after the heavy task is complete.
+
+1. **Stop Unnecessary Services**
+  
+  Use the following commands to stop services like Nginx and MySQL temporarily:
+  
+  ```bash
+  sudo systemctl stop nginx
+  sudo systemctl stop mysql
+  ```
+  
+2. **Run the Heavy Command**
+  
+  Execute your memory-intensive task, such as:
+  
+  ```bash
+  npm run build
+  ```
+  
+3. **Restart the Stopped Services**
+  
+  Once the heavy command is complete, restart the services:
+  
+  ```bash
+  sudo systemctl start nginx
+  sudo systemctl start mysql
+  ```
+  
+
+### h. Configure Laravel Queues with Supervisor
 
 Laravel queues allow you to defer time-consuming tasks, improving application performance and responsiveness. We'll use Supervisor to manage queue workers.
 
@@ -144,7 +604,7 @@ stopwaitsecs=3600
 - `--tries=3`: Retry failed jobs up to 3 times
 - Logs stored in project's storage/logs directory
 
-**<u>Configure Supervisor:</u>**
+**<u>Apply the configuration:</u>**
 
 ```shell
 # Reread configurations
@@ -198,14 +658,15 @@ sudo supervisorctl restart myapp-queue:*
 
 🚨 **Note**: Ensure your `.env` file has the correct `QUEUE_CONNECTION` set (e.g., `QUEUE_CONNECTION=database` or `redis`)
 
-### **1️⃣0️⃣** Create an Nginx config file for the project
+### i. Create an Nginx config file for the project
 
 ```
 nano /etc/nginx/sites-available/myapp
 ```
 
-&emsp;&emsp; 💠 There is a starter Nginx configuration for Laravel projects in the official documentation, or you can copy the config of an existing project, but be careful not to include the SSH config part. <br>
-&emsp;&emsp; 💠 This is a generale example:
+There is a starter Nginx configuration for Laravel projects in the official documentation, or you can copy the config of an existing project, but be careful not to include the SSL config part.
+
+**This is a generale example:**
 
 ```
 server {
@@ -242,20 +703,20 @@ server {
 }
 ```
 
-&emsp;&emsp; 💠 Create a symbolic link to sites-enabled:
+Create a symbolic link to sites-enabled:
 
 ```
 sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled
 ```
 
-&emsp;&emsp; 💠Check nginx syntax and reload it:
+Check nginx syntax and reload it:
 
 ```
 sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-### **1️⃣1️⃣** Generate the SSL certificate using Certbot:
+### j. Generate the SSL certificate using Certbot:
 
 ```
 sudo certbot --nginx --agree-tos --redirect --hsts --staple-ocsp -d myapp.domain.com --email you@email.com
@@ -264,143 +725,211 @@ sudo certbot --nginx --agree-tos --redirect --hsts --staple-ocsp -d myapp.domain
 Where:
 
 - **--nginx**: Use the Nginx authenticator and installer
-
+  
 - **--agree-tos**: Agree to Let’s Encrypt terms of service
-
+  
 - **--redirect:** Enforce HTTPS by 301 redirect.
-
+  
 - **--hsts:** Add the Strict-Transport-Security header to every HTTP response.
-
+  
 - **--staple-ocsp**: Enables OCSP Stapling.
-
+  
 - **-d**: flag is followed by a list of domain names, separated by a comma. You can add up to 100 domain names.
-
+  
 - **--email:** Email used for registration and recovery contact.
+  
 
-### **1️⃣2️⃣** Give the web server user write access to storage and cache:
+### j. Set Proper Permissions for Laravel
+
+Ensure the web server can write to `storage` and `bootstrap/cache`:
 
 ```
 sudo chown -R www-data:www-data /var/www/myapp/storage
 sudo chown -R www-data:www-data /var/www/myapp/bootstrap/cache
 ```
 
-&emsp;&emsp; 💠 Optionally restart the php-fpm:
+Optionally restart the php-fpm:
 
 ```
-sudo systemctl restart php-fpm
+sudo systemctl restart php8.3-fpm
 ```
 
-# 3. AUTO-DEPLOY WORKFLOW
+## 3. Setting Up CI/CD for Laravel Deployment
 
-We will use GitHub Actions to create a CI/CD pipeline for our auto-deploy workflow.
+Manually SSH-ing into your server and pulling the latest changes every time you update your Laravel project isn’t scalable. With **CI/CD**, you can automate that.
 
-### **1️⃣** Add SSH key to GitHub:
+We’ll use **GitHub Actions** and **Laravel Envoy** to build a lightweight and flexible CI/CD pipeline.
 
-&emsp;&emsp; 💠We must first add the **private** SSH key that we use to connect to our server to GitHub so it can connect to our server and deploy the project. <br><br>
-&emsp;&emsp; 💠 first copy the key from our local machine:
+### Option 1: Simple Auto-Deploy with GitHub Webhook
 
-```
-cat ~/.ssh/pair_name
-```
+**Best for:** Personal projects, small teams, basic auto-deploy
 
-&emsp;&emsp; 💠 Then in repository of the project on github, go to `Settings > Secretes and Variables > new repository secret` and add it there with a name like **DO_SSH_KEY**
+#### Step 1: Create a deploy script on your server
 
-### **2️⃣** Create the deploy script
+Create a Bash script on your server that pulls the latest changes and runs deployment commands.
 
-```
-nano /var/www/myapp/deploy.sh
+```bash
+sudo nano /var/www/myapp/deploy.sh
 ```
 
-- example script:
+Paste:
 
-  ```
-  #!/bin/bash
-  ```
+```bash
+#!/bin/bash
 
-# Navigate to the project directory
+cd /var/www/myapp || exit
 
-cd /var/www/myapp
+# Pull latest code
+git pull origin main
 
-# Pull the latest changes from the repository
-
-git pull origin prod
-
-# Install/update Composer dependencies
-
+# Run Laravel deployment tasks
 composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# Install/update Node.js dependencies
-
-npm install
-
-# Build frontend assets
-
-npm run build
-
-# Run database migrations
-
 php artisan migrate --force
-
-# Clear and cache config/routes/views
-
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
-# Set correct permissions
-
-sudo chown -R www-data:www-data /var/www/myapp/storage /var/www/myapp/bootstrap/cache
-sudo chmod -R 775 /var/www/myapp/storage /var/www/myapp/bootstrap/cache
-
-# Restart PHP-FPM (or whichever service is necessary to reload the application)
-
-sudo systemctl restart php8.3-fpm
-
-echo "Deployment completed successfully."
-
-```
-   💠Then make that file executable:
+npm run build
 ```
 
+Make it executable:
+
+```bash
 chmod +x /var/www/myapp/deploy.sh
-
-```
-### **3️⃣** Create the GitHub Actions WorkFlow
-   💠create a new file on your local project at ``.github/workflow/deploy.yml``
-- example script:
 ```
 
-name: Deploy MyApp Project
+#### Step 2: Create a webhook listener
+
+Use a lightweight Node.js tool like [Webhook](https://github.com/adnanh/webhook) or a Laravel route that triggers the script. Example (for simplicity):
+
+1. Add a route in `routes/web.php` (you can protect it with a token):
+  
+  ```php
+  Route::post('/deploy', function () {
+      $token = request('token');
+      if ($token !== 'your-secret-token') {
+          abort(403);
+      }
+  
+      exec('/var/www/myapp/deploy.sh > /dev/null 2>&1 &');
+  
+      return 'Deployment triggered';
+  });
+  ```
+  
+2. From your GitHub repo settings, add a **webhook** to:
+  
+
+`https://your-domain.com/deploy?token=your-secret-token`
+
+Set it to trigger on **push events**.
+
+Done. Every push to your `main` branch triggers deployment.
+
+### Option 2: Laravel Envoy + GitHub Actions
+
+**Best for:** Cleaner automation, multi-step deployments, rollback support
+
+#### Step 1: Install Laravel Envoy
+
+Install globally on your machine:
+
+```bash
+composer global require laravel/envoy
+```
+
+Make sure `~/.composer/vendor/bin` is in your `PATH`.
+
+#### Step 2: Create `Envoy.blade.php` in your Laravel project root
+
+```php
+@servers(['prod' => 'your_user@your_server_ip'])
+
+@task('deploy', ['on' => 'prod'])
+cd /var/www/myapp
+git pull origin main
+composer install --no-interaction --prefer-dist --optimize-autoloader
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+npm run build
+@endtask
+```
+
+Run manually with:
+
+```bash
+envoy run deploy
+```
+
+💡 You can secure the connection using SSH keys.
+
+#### Step 3: Automate with GitHub Actions
+
+In your Laravel repo, create a `.github/workflows/deploy.yml` file:
+
+```yaml
+name: Deploy Laravel App
 
 on:
-push:
-branches: - prod # Trigger only when pushing to the prod branch
+  push:
+    branches:
+      - main
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Copy SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DO_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-      - name: Add SSH key to the agent
-        run: |
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
-
-      - name: Deploy to DigitalOcean
-        run: |
-          ssh -o StrictHostKeyChecking=no server_user@server_ip 'bash /var/www/myapp/deploy.sh'
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-
+      - name: SSH & run Envoy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/myapp
+            envoy run deploy
 ```
-# 🚀That's it 🚀
-```
+
+Add these GitHub **Secrets** in your repo settings:
+
+- `SSH_HOST`
+  
+- `SSH_USER`
+  
+- `SSH_PRIVATE_KEY`
+  
+
+## Conclusion
+
+Deploying a Laravel application on a LEMP stack might seem daunting at first, but with a structured approach, it becomes a powerful and repeatable process. In this guide, you’ve learned how to:
+
+- Set up a secure and optimized LEMP server
+  
+- Install all Laravel dependencies, tools, and services
+  
+- Deploy your Laravel project manually or with automation
+  
+- Configure SSL, queues, and frontend builds
+  
+- Set up a CI/CD pipeline to streamline future updates
+  
+
+With your server properly configured and a reliable deployment workflow in place, you’re now ready to launch, scale, and maintain Laravel projects with confidence.
+
+**Next steps:**
+
+- 🔐 Harden your server (fail2ban, SSH port changes, security updates)
+  
+- 📈 Monitor performance and logs
+  
+- 🚀 Add staging environments
+  
+- 🧪 Integrate testing in your CI pipeline
+  
+
+If you found this guide helpful, consider bookmarking it, sharing it, or customizing it for your own team documentation. Happy deploying!

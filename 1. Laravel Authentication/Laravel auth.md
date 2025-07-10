@@ -1,4 +1,4 @@
-![](laravel%20auth.png)
+![](laravel%20auth.webp)
 
 # Table of Contents
 

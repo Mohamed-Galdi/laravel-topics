@@ -26,7 +26,7 @@ To prevent disruptions, **versioning** is crucial. It allows you to release new 
 
 Organize versioned controllers by creating folders for each API version inside the `App\Http\Controllers\Api` directory.
 
-![](api%20controller%20versioning%20folders.png)
+![](api%20controller%20versioning%20folders.webp)
 
 **Note:** The base `Controller` class located in `App\Http\Controllers` is imported automatically for controllers in the main folder. However, for subfolders, you need to import it manually.
 
@@ -339,7 +339,7 @@ Filters depend on query parameters sent by the client. For example:
    - Laravel parses this into a structured object: `['gt' => '20']`.
    - This allows you to specify a comparison operator (`gt`, `lt`, etc.) along with the value.
 
-![](query%20operators.png)
+![](query%20operators.webp)
 
 ## a. Filter Class
 

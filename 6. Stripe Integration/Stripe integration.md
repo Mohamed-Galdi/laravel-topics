@@ -47,7 +47,7 @@ Stripe is one of the most popular payment gateways, offering a seamless and secu
 
 Below is the complete workflow of implementing Stripe payments. The accompanying image illustrates the process step by step.
 
-![](work%20flow.png)
+![](work%20flow.webp)
 
 ---
 
@@ -111,7 +111,7 @@ Webhooks are URLs that listen for events triggered by external systems (like Str
 
 You can configure a webhook in Stripe’s dashboard to listen for payment-related events, such as `checkout.session.completed`. When a successful payment is detected, Stripe sends a request to the configured webhook URL with the details of the `Checkout Session`.
 
-![](webhooks.png)
+![](webhooks.webp)
 
 ### Step 9: Updating the Order via Webhooks
 
@@ -288,13 +288,13 @@ Stripe renders the checkout page differently depending on whether there’s a si
 
 If the user purchases only one item, the payment page might look like this:  
 
-![](single%20line%20itmes.png)
+![](single%20line%20itmes.webp)
 
 - Example: Multiple Line Items:
 
 If there are multiple items, they will appear as a detailed list:
 
-![](multiple%20line%20items.png)
+![](multiple%20line%20items.webp)
 
 ###### Adding Product Images
 
@@ -406,7 +406,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xyz789
 - Stripe provides a CLI tool to test webhooks locally.
 - Follow the instructions on the Stripe website to install the tool. Once installed, open your terminal and proceed with the steps below.
 
-![](local%20webhook%20steps.png)
+![](local%20webhook%20steps.webp)
 
 #### 3. Authenticate with Stripe
 

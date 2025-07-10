@@ -129,7 +129,7 @@ Vonage acts as the gateway to send SMS to real mobile numbers around the world. 
 
 3. Once inside the dashboard, locate your **API Key** and **API Secret**
 
-![Screenshot](Screenshot.png)
+![Screenshot](Screenshot.webp)
 
 #### Step 2: Install Laravel Package
 
