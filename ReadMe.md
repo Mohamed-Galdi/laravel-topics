@@ -4,18 +4,18 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 
 ## Table of Contents
 
-01. [Laravel Authentication](00-laravel-authentication/laravel-authentication.md)
-02. [Laravel Authorization](2.%20Laravel%20Authorization/Laravel%20Authorization%2C%20Gates%20and%20Polices.md)
-03. [Cookies And Sessions](3.%20Cookies%20and%20Sessions/Cookies%20And%20Sessions.md)
-04. [Deploy Laravel App on LEMP server](4.%20Laravel%20on%20LEMP/Deploy%20Laravel%20App%20on%20LEMP%20Server.md)
-05. [Laravel API](5.%20Laravel%20API/Laravel%20API.md)
-06. [Stripe Integration](6.%20Stripe%20Integration/Stripe%20integration.md)
-07. [Mailing](7.%20Mailing/Mailing.md)
-08. [Laravel Queues](8.%20Laravel%20Queues/laravel%20queues.md)
-09. [Laravel Cache](9.%20Laravel%20Cache/laravel%20cache.md)
-10. [Mastering Large Datasets In Laravel](#)
-11. [Code Quality Tools: Pint & Larastan](11.%20%20Code%20Quality%20Tools%3B%20Pint%20%26%20Larastan/Code%20Quality%20Tools%20.md)
-12. [Send SMS In Laravel](12.%20Send%20SMS/Send%20SMS%2C%20OTP%20example.md)
+01. [Laravel Authentication](01-laravel-authentication/laravel-authentication.md)
+02. [Laravel Authorization](02-laravel-authorization/laravel-authorization.md)
+03. [Cookies And Sessions](03-cookies-and-sessions/cookies-and-sessions.md)
+04. [Deploy Laravel App on LEMP server](04-deploy-laravel-app-on-lemp-server/deploy-laravel-app-on-lemp-server.md)
+05. [Laravel API](05-laravel-api/laravel-api.md)
+06. [Stripe Integration](06-stripe-integration/stripe-integration.md)
+07. [Mailing](07-mailing/mailing.md)
+08. [Laravel Queues](08-laravel-queues/laravel-queues.md)
+09. [Laravel Cache](09-laravel-cache/laravel-cache.md)
+10. [Mastering Large Datasets In Laravel](10-mastering-large-datasets-in-laravel/mastering-large-datasets-in-laravel.md)
+11. [Code Quality Tools: Pint & Larastan](11-code-quality-tools-pint-larastan/code-quality-tools-pint-larastan.md)
+12. [Send SMS In Laravel](12-send-sms-in-laravel/send-sms-in-laravel.md)
 
 Each section is structured to give a clear overview of the topic and include examples, best practices, and additional resources.
 
