@@ -4,7 +4,7 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 
 ## Table of Contents
 
-01. [Laravel Authentication](1.%20Laravel%20Authentication/Laravel%20auth.md)
+01. [Laravel Authentication](00-laravel-authentication/laravel-authentication.md)
 02. [Laravel Authorization](2.%20Laravel%20Authorization/Laravel%20Authorization%2C%20Gates%20and%20Polices.md)
 03. [Cookies And Sessions](3.%20Cookies%20and%20Sessions/Cookies%20And%20Sessions.md)
 04. [Deploy Laravel App on LEMP server](4.%20Laravel%20on%20LEMP/Deploy%20Laravel%20App%20on%20LEMP%20Server.md)
