@@ -1,4 +1,19 @@
-# Mastering Large Datasets in Laravel
+# Table of Contents
+
+1. [Seeding Large Datasets for Testing](#1-seeding-large-datasets-for-testing)
+2. [Querying Large Datasets Efficiently](#2-querying-large-datasets-efficiently)
+    - a. [Query Methods Compared](#a-query-methods-compared)
+    - b. [Select Only Needed Columns](#b-select-only-needed-columns)
+    - c. [Indexing for Speed](#c-indexing-for-speed)
+    - d. [Using EXPLAIN to Analyze Queries](#d-using-explain-to-analyze-queries)
+3. [Processing Large Datasets](#3-processing-large-datasets)
+    - a. [Chunking Results](#a-chunking-results)
+    - b. [Lazy Loading](#b-lazy-loading)
+    - c. [Queueing for Background Processing](#c-queueing-for-background-processing)
+4. [Don’t Forget Caching](#4-dont-forget-caching)
+5. [Scaling Strategies](#5-scaling-strategies)
+6. [Best Practices Summary](#6-best-practices-summary)
+
 
 Handling large datasets in Laravel—think millions of records—requires careful planning to ensure your application remains fast, scalable, and memory-efficient. Whether you're building reports, processing API data, or generating exports, this guide provides **practical, Laravel-specific techniques** to optimize database operations. We'll cover seeding test data, efficient querying, processing large datasets, caching, and scaling strategies, all with real-world examples.
 
@@ -122,7 +137,7 @@ php artisan seed:users --total=200000 --batch-size=10000
 
 Example output:
 
-![](C:\Users\DELL\Desktop\projects\others\laravel-topics\10-mastering-large-datasets-in-laravel\seeding-output.webp)
+![example output](seeding-output.webp)
 
 > ⚠️ **Note**: Some records may be skipped (about 2%) due to timezone-related `DateTime` issues when generating invalid timestamps. This is expected and safe to ignore for testing purposes.
 
@@ -243,7 +258,7 @@ For example, if we have a table of users and want to search for a user with the 
 
 When we add an index on the **username** column, MySQL organizes usernames in a sorted data structure (typically a B-tree) and can use binary search algorithms to locate "Xavi" more efficiently.
 
-![](C:\Users\DELL\Desktop\projects\others\laravel-topics\10-mastering-large-datasets-in-laravel\database-indexes.webp)
+![database indexes](database-indexes.webp)
 
 ##### Pros of Using Indexes:
 
@@ -525,7 +540,7 @@ For very large datasets, consider these advanced techniques:
 
 **When to Use**: Partitioning for date-based queries; archiving for old data; sharding for horizontal scaling.
 
-#### Best Practices Summary
+## 6. Best Practices Summary
 
 1. **Always use chunking methods** (`chunk()`, `lazy()`, `cursor()`) for large datasets
 2. **Create appropriate indexes** on frequently queried columns
