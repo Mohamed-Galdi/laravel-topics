@@ -1,12 +1,15 @@
 # Send SMS with Laravel, OTP example
 
 - [Concept Intoduction](#concept-intoduction)
+
 - [1. Frontend Setup: International Phone Input](#1-frontend-setup-international-phone-input)
+
 - [2. Backend Setup: Configuring Vonage for SMS](#2-backend-setup-configuring-vonage-for-sms)
- 
+
 - [3. Phone Number OTP Verification](#3-phone-number-otp-verification)
 
 ## Concept Intoduction
+
 To implement SMS funtionality in a Laravel project, the most reliable and flexible way is to use Laravel's built-in **Notification** system along with an SMS gateway like **Vonage** (formerly Nexmo). This approach leverages Laravel's elegant notification channel architecture while keeping the implementation clean and scalable.
 
 On the frontend, capturing valid international phone numbers can be tricky. The [`intl-tel-input`](https://intl-tel-input.com/storybook/?path=/docs/intltelinput--vanilla) JavaScript library provides a robust and user-friendly UI for entering and validating international phone numbers. It ensures consistency and accuracy in the format of numbers sent to the backend.
@@ -186,7 +189,6 @@ class User extends Authenticatable
         return $this->phone;
     }
 }
-
 ```
 
 Create the Notification Class
@@ -216,8 +218,6 @@ class PhoneVerification extends Notification
             ->content("Your OTP is {$this->otp}. This code will expire in 5 minutes. ");
     }
 }
-
-
 ```
 
 In your login controller:
@@ -231,7 +231,7 @@ public function store(Request $request): RedirectResponse
         return back()->withErrors(['phone' => 'Too many attempts. Please try again in a 5 minute.']);
     }
     RateLimiter::hit($key, 60 * 5); // lock the IP for 5 minutes
-    
+
     $request->validate([
         'phone' => 'required|string|max:255|min:3',
     ]);
@@ -335,5 +335,3 @@ Route::middleware(['auth', 'phone_verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 });
 ```
-
-

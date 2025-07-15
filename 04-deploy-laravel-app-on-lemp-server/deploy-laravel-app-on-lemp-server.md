@@ -1,7 +1,7 @@
 # Table of Contents
 
 1. [1. Preparing the LEMP stack server](#1-preparing-the-lemp-stack-server)
-
+   
    - [a. L for Linux](#a-l-for-linux)
    - [b. E for NginX](#b-e-for-nginx)
    - [c. M for MySQL](#c-m-for-mysql)
@@ -9,7 +9,7 @@
    - [e. Additional Requirements](#e-additional-requirements)
 
 2. [2. Deploy the Laravel Project](#2-deploy-the-laravel-project)
-
+   
    - [a. Prepare a Domain or Subdomain](#a-prepare-a-domain-or-subdomain)
    - [b. Clone the Laravel Project](#b-clone-the-laravel-project)
    - [c. Create a MySQL Database](#c-create-a-mysql-database)
@@ -23,25 +23,23 @@
    - [j. Set Proper Permissions for Laravel](#j-set-proper-permissions-for-laravel)
 
 3. [3. Setting Up CI/CD for Laravel Deployment](#3-setting-up-cicd-for-laravel-deployment)
-
+   
    - [Option 1: Simple Auto-Deploy with GitHub Webhook](#option-1-simple-auto-deploy-with-github-webhook)
    - [Option 2: Laravel Envoy + GitHub Actions](#option-2-laravel-envoy--github-actions)
-
 
 In this comprehensive guide, we’ll walk through the process of deploying a Laravel project on a **LEMP stack**—a powerful and popular environment made up of **Linux**, **Nginx**, **MySQL**, and **PHP**. We’ll use a fresh **Ubuntu VPS from DigitalOcean** as our server, and cover everything from initial setup to production-ready deployment.
 
 Along the way, you’ll learn:
 
 - What the LEMP stack is and why it’s used for Laravel
-  
+
 - How to prepare your server with Nginx, MySQL, PHP, Composer, Node.js, and other essentials
-  
+
 - How to securely deploy your Laravel codebase
-  
+
 - How to configure your environment, file permissions, and storage
-  
+
 - And finally, how to set up a basic **CI/CD pipeline** to streamline future deployments
-  
 
 ## 1. Preparing the LEMP stack server
 
@@ -52,13 +50,12 @@ Linux is the foundation of the LEMP stack. The most commonly used distribution f
 If you’re using [DigitalOcean](https://m.do.co/c/ea1b6a0cfa31), you can create a VPS (called a *Droplet*) in just a few steps:
 
 - Choose a region
-  
+
 - Select **Ubuntu 22.04 LTS** as the image
-  
+
 - Pick your plan (CPU, RAM, storage)
-  
+
 - Set **SSH** as the authentication method
-  
 
 Once your droplet is created, connect to it via SSH as the root user:
 
@@ -107,31 +104,30 @@ ssh your_name@your_server_ip
 Once your new user can connect via SSH, it's a good idea to disable direct root login for added security:
 
 1. Open the SSH configuration file:
-  
-  ```bash
-  sudo nano /etc/ssh/sshd_config
-  ```
-  
+   
+   ```bash
+   sudo nano /etc/ssh/sshd_config
+   ```
+
 2. Find the line:
-  
-  ```nginx
-  PermitRootLogin yes
-  ```
-  
-  And change it to:
-  
-  ```nginx
-  PermitRootLogin no
-  ```
-  
+   
+   ```nginx
+   PermitRootLogin yes
+   ```
+   
+   And change it to:
+   
+   ```nginx
+   PermitRootLogin no
+   ```
+
 3. Save and exit (`Ctrl + O`, then `Enter`, then `Ctrl + X`).
-  
+
 4. Apply the changes:
-  
-  ```bash
-  sudo systemctl restart ssh
-  ```
-  
+   
+   ```bash
+   sudo systemctl restart ssh
+   ```
 
 From now on, only non-root users with valid SSH keys will be able to connect. If anything goes wrong, you can still use the DigitalOcean console to regain access.
 
@@ -279,15 +275,14 @@ sudo mysql_secure_installation
 Follow the prompts:
 
 - Set a root password (if not already set)
-  
+
 - Remove anonymous users
-  
+
 - Disallow remote root login
-  
+
 - Remove the test database
-  
+
 - Reload privilege tables
-  
 
 > 📝 If you're unsure about any step, choosing the recommended defaults is usually safe.
 
@@ -331,13 +326,12 @@ sudo apt install php php-fpm php-mysql php-curl php-mbstring php-xml php-bcmath 
 **Explanation of some key extensions:**
 
 - `php-mysql`: Required to connect to MySQL
-  
+
 - `php-mbstring`: Handles multi-byte strings (used by Laravel)
-  
+
 - `php-xml`: Required for tasks like config caching
-  
+
 - `php-curl`, `php-bcmath`, `php-zip`: Commonly needed by Laravel packages
-  
 
 After installation, verify the PHP version:
 
@@ -396,31 +390,30 @@ Laravel uses tools like **Vite**, **TailwindCSS** to compile frontend assets. Th
 We’ll use **NVM (Node Version Manager)** to install Node.js in a flexible and upgradeable way.
 
 1. Install NVM:
-  
-  ```bash
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  ```
-  
+   
+   ```bash
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+   ```
+
 2. Load NVM into your current shell:
-  
-  ```bash
-  export NVM_DIR="$HOME/.nvm"
-  source "$NVM_DIR/nvm.sh"
-  ```
-  
+   
+   ```bash
+   export NVM_DIR="$HOME/.nvm"
+   source "$NVM_DIR/nvm.sh"
+   ```
+
 3. Install the latest LTS version of Node.js:
-  
-  ```bash
-  nvm install --lts
-  ```
-  
+   
+   ```bash
+   nvm install --lts
+   ```
+
 4. Confirm installation:
-  
-  ```bash
-  node -v
-  npm -v
-  ```
-  
+   
+   ```bash
+   node -v
+   npm -v
+   ```
 
 ##### 🔐 Certbot (Free SSL from Let’s Encrypt)
 
@@ -459,11 +452,10 @@ git clone git@github.com:your-username/your-repo.git myapp
 If you're using SSH authentication, make sure to:
 
 - Generate an SSH key (`ssh-keygen`)
-  
+
 - Add the public key to GitHub/GitLab under your account settings
-  
+
 - Start the SSH agent (`eval "$(ssh-agent -s)"`) and add your key (`ssh-add ~/.ssh/your_key`)
-  
 
 Disable Git pull rebase mode (optional):
 
@@ -541,31 +533,30 @@ npm run build
 Running heavy commands like `npm run build` can lead to memory issues if your server has low RAM (e.g., 1GB). A simple workaround is to stop other services to free up RAM temporarily, then restart them after the heavy task is complete.
 
 1. **Stop Unnecessary Services**
-  
-  Use the following commands to stop services like Nginx and MySQL temporarily:
-  
-  ```bash
-  sudo systemctl stop nginx
-  sudo systemctl stop mysql
-  ```
-  
+   
+   Use the following commands to stop services like Nginx and MySQL temporarily:
+   
+   ```bash
+   sudo systemctl stop nginx
+   sudo systemctl stop mysql
+   ```
+
 2. **Run the Heavy Command**
-  
-  Execute your memory-intensive task, such as:
-  
-  ```bash
-  npm run build
-  ```
-  
+   
+   Execute your memory-intensive task, such as:
+   
+   ```bash
+   npm run build
+   ```
+
 3. **Restart the Stopped Services**
-  
-  Once the heavy command is complete, restart the services:
-  
-  ```bash
-  sudo systemctl start nginx
-  sudo systemctl start mysql
-  ```
-  
+   
+   Once the heavy command is complete, restart the services:
+   
+   ```bash
+   sudo systemctl start nginx
+   sudo systemctl start mysql
+   ```
 
 ### h. Configure Laravel Queues with Supervisor
 
@@ -729,19 +720,18 @@ sudo certbot --nginx --agree-tos --redirect --hsts --staple-ocsp -d myapp.domain
 Where:
 
 - **--nginx**: Use the Nginx authenticator and installer
-  
+
 - **--agree-tos**: Agree to Let’s Encrypt terms of service
-  
+
 - **--redirect:** Enforce HTTPS by 301 redirect.
-  
+
 - **--hsts:** Add the Strict-Transport-Security header to every HTTP response.
-  
+
 - **--staple-ocsp**: Enables OCSP Stapling.
-  
+
 - **-d**: flag is followed by a list of domain names, separated by a comma. You can add up to 100 domain names.
-  
+
 - **--email:** Email used for registration and recovery contact.
-  
 
 ### j. Set Proper Permissions for Laravel
 
@@ -806,22 +796,21 @@ chmod +x /var/www/myapp/deploy.sh
 Use a lightweight Node.js tool like [Webhook](https://github.com/adnanh/webhook) or a Laravel route that triggers the script. Example (for simplicity):
 
 1. Add a route in `routes/web.php` (you can protect it with a token):
-  
-  ```php
-  Route::post('/deploy', function () {
+   
+   ```php
+   Route::post('/deploy', function () {
       $token = request('token');
       if ($token !== 'your-secret-token') {
           abort(403);
       }
-  
+   
       exec('/var/www/myapp/deploy.sh > /dev/null 2>&1 &');
-  
+   
       return 'Deployment triggered';
-  });
-  ```
-  
+   });
+   ```
+
 2. From your GitHub repo settings, add a **webhook** to:
-  
 
 `https://your-domain.com/deploy?token=your-secret-token`
 
@@ -902,38 +891,35 @@ jobs:
 Add these GitHub **Secrets** in your repo settings:
 
 - `SSH_HOST`
-  
+
 - `SSH_USER`
-  
+
 - `SSH_PRIVATE_KEY`
-  
 
 ## Conclusion
 
 Deploying a Laravel application on a LEMP stack might seem daunting at first, but with a structured approach, it becomes a powerful and repeatable process. In this guide, you’ve learned how to:
 
 - Set up a secure and optimized LEMP server
-  
+
 - Install all Laravel dependencies, tools, and services
-  
+
 - Deploy your Laravel project manually or with automation
-  
+
 - Configure SSL, queues, and frontend builds
-  
+
 - Set up a CI/CD pipeline to streamline future updates
-  
 
 With your server properly configured and a reliable deployment workflow in place, you’re now ready to launch, scale, and maintain Laravel projects with confidence.
 
 **Next steps:**
 
 - 🔐 Harden your server (fail2ban, SSH port changes, security updates)
-  
+
 - 📈 Monitor performance and logs
-  
+
 - 🚀 Add staging environments
-  
+
 - 🧪 Integrate testing in your CI pipeline
-  
 
 If you found this guide helpful, consider bookmarking it, sharing it, or customizing it for your own team documentation. Happy deploying!
