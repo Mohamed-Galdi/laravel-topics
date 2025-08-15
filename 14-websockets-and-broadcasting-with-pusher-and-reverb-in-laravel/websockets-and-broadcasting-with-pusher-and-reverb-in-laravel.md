@@ -801,7 +801,7 @@ Content-Type: application/json
 
 #### Step 3: Subscribe to Private Channel
 
-Return to your WebSocket connection and send a subscription message using the authentication string:
+Return to your WebSocket connection and send a subscription message using the authentication string
 
 A successful subscription will return:
 
