@@ -17,6 +17,7 @@ Welcome to the **Laravel Topics** repository! This repository contains my person
 11. [Code Quality Tools: Pint & Larastan](11-code-quality-tools-pint-and-larastan/code-quality-tools-pint-and-larastan.md)
 12. [Send SMS In Laravel](12-send-sms-in-laravel/send-sms-in-laravel.md)
 13. [Redis In Laravel](13-redis-in-laravel/redis-in-laravel.md)
+14. [Websockets and Broadcasting with Pusher and Reverb in Laravel](14-websockets-and-broadcasting-with-pusher-and-reverb-in-laravel/websockets-and-broadcasting-with-pusher-and-reverb-in-laravel.md)
 
 Each section is structured to give a clear overview of the topic and include examples, best practices, and additional resources.
 
